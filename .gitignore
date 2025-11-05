@@ -49,3 +49,15 @@ iOSInjectionProject/
 # Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+
+# Backend / Node.js
+server/node_modules/
+server/.env
+server/.env.local
+server/.env.*.local
+server/logs/
+server/*.log
+server/npm-debug.log*
+server/.pm2/
+server/ecosystem.config.js
+server/coverage/
