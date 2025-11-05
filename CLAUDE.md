@@ -2,6 +2,191 @@
 
 This document contains the complete architecture and implementation plan for adding peer-to-peer messaging to BLEScanner.
 
+---
+
+## 🚀 PROGRESS LOG - Session November 4-5, 2025
+
+### ✅ COMPLETED: Phase 1 - Backend API (Days 1-3)
+
+**Day 1: Server & Database Setup** ✅
+- PostgreSQL 15 installed and configured
+- Database schema created (4 tables: users, messages, message_recipients, contacts)
+- 7 performance indexes implemented
+- Node.js + Express project structure
+- Environment variables configured
+- Database connection tested and working
+
+**Day 2: API Endpoints** ✅
+- Authentication routes (register, login) - **TESTED**
+- User routes (search, profile) - **TESTED**
+- Contact routes (add, list, remove) - **TESTED**
+- Message routes (send, history, mark as read) - **TESTED**
+- Device routes (push token registration) - **READY**
+- JWT authentication middleware
+- bcrypt password hashing (10 rounds)
+- Error handling middleware
+- All endpoints tested with curl
+
+**Day 3: Push Notifications** ✅
+- APNs authentication key configured (Key ID: X859SFN76P)
+- Team ID: NV97R9Q8MF
+- Bundle ID: com.prishajain.blescanner
+- PushService implemented with node-apn
+- Message sending triggers push notifications
+- APNs provider initialized successfully
+- Development environment (sandbox) configured
+
+**Backend Status:** 🟢 100% COMPLETE and TESTED
+- Running on: http://localhost:3000
+- Database: PostgreSQL with 2 test users (alice, bob)
+- All API endpoints functional
+- Push notifications configured and ready
+
+---
+
+### 🔄 IN PROGRESS: Phase 2 - iOS App Integration (Day 4)
+
+**Completed Today:**
+- ✅ API networking layer (APIClient.swift)
+- ✅ Data models (MessagingModels.swift)
+- ✅ Keychain secure storage (KeychainHelper.swift)
+- ✅ Authentication service (AuthService.swift)
+- ✅ Login/Register UI (AuthView.swift)
+- ✅ App authentication flow (BLEScannerApp.swift updated)
+- ✅ Swift 5.9+ `@Observable` patterns implemented
+
+**Current Issue: iOS Networking Configuration** ⚠️
+- **Problem:** iOS app cannot connect to `localhost:3000` from physical device
+- **Error:** "Connection refused" (Error Code -1004)
+- **Root Cause:** Physical iOS devices cannot access Mac's localhost via loopback address
+- **Status:** Identified, solution documented below
+
+---
+
+### 📋 NEXT SESSION - Immediate Tasks
+
+**Priority 1: Fix Networking** (15 minutes)
+1. Update backend to listen on `0.0.0.0` instead of localhost
+2. Find Mac's IP address (System Settings → Network)
+3. Create environment-based configuration for iOS app
+4. Update APIConstants.swift with Mac's IP for physical device testing
+5. Configure macOS firewall to allow port 3000
+
+**Priority 2: Test Authentication** (30 minutes)
+1. Build and run on iOS simulator (should work with localhost)
+2. Build and run on physical device (with Mac IP)
+3. Test registration flow
+4. Test login flow
+5. Verify token storage in Keychain
+
+**Priority 3: Add Messaging Features** (2-3 hours)
+1. Create MessagingService.swift
+2. Create ContactListView.swift
+3. Create MessageHistoryView.swift
+4. Integrate with BLEManager for auto-send
+5. Add NotificationService for push handling
+
+**Priority 4: End-to-End Testing** (1 hour)
+1. Register device for push notifications
+2. Send test message
+3. Verify push notification received
+4. Test BLE connection → auto-message flow
+
+---
+
+### 🛠️ iOS DEVELOPMENT - NETWORKING CONFIGURATION
+
+#### The Problem
+
+**Current Configuration:**
+```swift
+// APIConstants.swift
+static let baseURL = "http://localhost:3000/api"
+```
+
+**Why It Fails:**
+- iOS Simulator: ✅ Can access `localhost` (shares Mac's network)
+- Physical Device: ❌ Cannot access `localhost` (different network entity)
+- Error: `nw_socket_handle_socket_event Socket SO_ERROR [61: Connection refused]`
+
+#### Solution: Environment-Based Configuration
+
+**Step 1: Find Your Mac's IP Address**
+```bash
+# Terminal command
+ifconfig | grep "inet " | grep -v 127.0.0.1
+
+# Or: System Settings → Network → Wi-Fi/Ethernet → IP Address
+# Example: 192.168.1.45
+```
+
+**Step 2: Update Backend (server/index.js)**
+```javascript
+// Change from:
+app.listen(PORT, () => {
+
+// To:
+app.listen(PORT, '0.0.0.0', () => {  // Listen on all network interfaces
+  console.log(`Server accessible at: http://YOUR_MAC_IP:${PORT}`);
+});
+```
+
+**Step 3: Create EnvironmentConfig.swift**
+```swift
+import Foundation
+
+struct EnvironmentConfig {
+    static let isSimulator = TARGET_OS_SIMULATOR != 0
+
+    static let baseURL: String = {
+        if isSimulator {
+            return "http://localhost:3000/api"
+        } else {
+            // UPDATE THIS with your Mac's actual IP address
+            return "http://192.168.1.45:3000/api"
+        }
+    }()
+}
+```
+
+**Step 4: Update APIConstants.swift**
+```swift
+struct APIConfig {
+    static let baseURL = EnvironmentConfig.baseURL  // Use environment-based URL
+    static let timeout: TimeInterval = 30
+}
+```
+
+**Step 5: Configure macOS Firewall**
+- System Settings → Privacy & Security → Firewall
+- Either: Allow Terminal/Node.js incoming connections
+- Or: Temporarily disable firewall for development
+
+**Step 6: Verify Network Access**
+```bash
+# Test from Mac terminal
+curl http://YOUR_MAC_IP:3000/health
+
+# Test from iPhone Safari
+http://YOUR_MAC_IP:3000/health
+
+# Expected response:
+# {"status":"ok","timestamp":"...","environment":"development"}
+```
+
+#### Testing Checklist
+
+Before each iOS testing session:
+
+- [ ] Mac and iPhone on **same Wi-Fi network**
+- [ ] Backend server running: `cd server && npm start`
+- [ ] Server listening on `0.0.0.0` (not just localhost)
+- [ ] macOS firewall allows port 3000
+- [ ] iOS app has correct IP in EnvironmentConfig.swift
+- [ ] Test `/health` endpoint from iPhone Safari first
+
+---
+
 ## Table of Contents
 1. [Project Overview](#project-overview)
 2. [Architecture](#architecture)
