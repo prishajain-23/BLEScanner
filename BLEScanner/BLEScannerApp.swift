@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct BLEScannerApp: App {
+    @State private var authService = AuthService.shared
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if authService.isAuthenticated {
+                ContentView()
+            } else {
+                AuthView()
+            }
         }
     }
 }
