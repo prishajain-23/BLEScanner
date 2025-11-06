@@ -176,7 +176,6 @@ struct ContentView: View {
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
-                    filteredResults = bleManager.discoveredPeripherals
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
@@ -185,15 +184,12 @@ struct ContentView: View {
             }
         }
         .padding()
-        .task {
-            // Initialize with all peripherals
-            filteredResults = bleManager.discoveredPeripherals
-        }
     }
 
     // MARK: - Device List
     private var deviceList: some View {
-        List(filteredResults, id: \.peripheral.identifier) { discoveredPeripheral in
+        List(searchText.isEmpty ? bleManager.discoveredPeripherals : filteredResults,
+             id: \.peripheral.identifier) { discoveredPeripheral in
             DeviceRow(
                 peripheral: discoveredPeripheral.peripheral,
                 advertisedData: discoveredPeripheral.advertisedData,
@@ -212,16 +208,6 @@ struct ContentView: View {
             )
         }
         .listStyle(.plain)
-        .onChange(of: bleManager.discoveredPeripherals) { oldValue, newValue in
-            // Update filtered results when peripherals change
-            if searchText.isEmpty {
-                filteredResults = newValue
-            } else {
-                Task {
-                    await filterPeripherals(query: searchText)
-                }
-            }
-        }
     }
 
     // MARK: - Helper Functions

@@ -174,10 +174,14 @@ class ContactService {
     }
 
     /// Toggle contact selection for messaging
+    @MainActor
     func toggleContactSelection(contactId: Int) {
         if let index = contacts.firstIndex(where: { $0.id == contactId }) {
-            contacts[index].isSelectedForMessaging?.toggle()
+            // Initialize to false if nil, then toggle
+            let currentValue = contacts[index].isSelectedForMessaging ?? false
+            contacts[index].isSelectedForMessaging = !currentValue
             saveSelectedContacts()
+            print("🔄 Toggled contact \(contactId): \(!currentValue)")
         }
     }
 
@@ -189,8 +193,16 @@ class ContactService {
     }
 
     /// Load selected contacts from UserDefaults
+    @MainActor
     func loadSelectedContacts() {
+        // First, initialize all contacts to false
+        for index in contacts.indices {
+            contacts[index].isSelectedForMessaging = false
+        }
+
+        // Then, set saved ones to true
         guard let savedIds = UserDefaults.standard.array(forKey: "selectedContactIds") as? [Int] else {
+            print("📂 No saved contacts found, all initialized to false")
             return
         }
 
