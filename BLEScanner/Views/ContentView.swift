@@ -383,6 +383,40 @@ struct SettingsView: View {
                     Text("This shortcut runs only when the app is in the foreground. For background automation, enable notifications above and create a Shortcuts automation triggered by the 'ESP32 Connected' notification.")
                 }
 
+                // MVP Messaging Section
+                Section {
+                    Toggle("Auto-Send Messages", isOn: Binding(
+                        get: { bleManager.messagingEnabled },
+                        set: { bleManager.messagingEnabled = $0 }
+                    ))
+
+                    if AuthService.shared.isAuthenticated {
+                        HStack {
+                            Text("Logged in as")
+                            Spacer()
+                            Text(AuthService.shared.currentUser?.username ?? "Unknown")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        TextField("Contact IDs (comma-separated)", text: Binding(
+                            get: { bleManager.messagingContactIds.map(String.init).joined(separator: ", ") },
+                            set: { newValue in
+                                bleManager.messagingContactIds = newValue
+                                    .split(separator: ",")
+                                    .compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+                            }
+                        ))
+                        .keyboardType(.numberPad)
+                    } else {
+                        Text("Not logged in")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Messaging (MVP)")
+                } footer: {
+                    Text("When enabled, messages will be sent to the specified contact IDs when ESP32 connects. Enter contact user IDs from the backend (e.g., '3' for bob_test).")
+                }
+
                 Section {
                     HStack {
                         Text("Connection State")

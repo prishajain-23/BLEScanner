@@ -8,12 +8,8 @@
 import Foundation
 
 struct APIConfig {
-    #if DEBUG
-    static let baseURL = "http://localhost:3000/api"
-    #else
-    static let baseURL = "https://your-domain.com/api" // Update when deploying
-    #endif
-
+    // Production server deployed at 142.93.184.210
+    static let baseURL = "http://142.93.184.210/api"
     static let timeout: TimeInterval = 30
 }
 
