@@ -12,9 +12,10 @@ import Observation
 class ContactService {
     static let shared = ContactService()
 
-    @MainActor var contacts: [Contact] = []
-    @MainActor var isLoading = false
-    @MainActor var errorMessage: String?
+    // Only mark as @MainActor what absolutely needs UI updates
+    var contacts: [Contact] = []
+    var isLoading = false
+    var errorMessage: String?
 
     private let apiClient = APIClient.shared
     private var lastFetchTime: Date?
@@ -25,17 +26,18 @@ class ContactService {
     // MARK: - Fetch Contacts
 
     /// Fetch the user's contact list (with caching)
+    @MainActor
     func fetchContacts(forceRefresh: Bool = false) async {
         // Check cache first
         if !forceRefresh,
            let lastFetch = lastFetchTime,
            Date().timeIntervalSince(lastFetch) < cacheTimeout {
-            print("📦 Using cached contacts (\(await contacts.count) contacts)")
+            print("📦 Using cached contacts (\(contacts.count) contacts)")
             return
         }
 
-        await MainActor.run { isLoading = true }
-        await MainActor.run { errorMessage = nil }
+        isLoading = true
+        errorMessage = nil
 
         do {
             let response: ContactsResponse = try await apiClient.get(
@@ -44,25 +46,19 @@ class ContactService {
             )
 
             if response.success, let fetchedContacts = response.contacts {
-                await MainActor.run {
-                    contacts = fetchedContacts
-                }
+                contacts = fetchedContacts
                 lastFetchTime = Date()
                 print("✅ Fetched \(fetchedContacts.count) contacts")
             } else {
-                await MainActor.run {
-                    errorMessage = response.error ?? "Failed to fetch contacts"
-                }
+                errorMessage = response.error ?? "Failed to fetch contacts"
                 print("❌ Error: \(errorMessage ?? "Unknown")")
             }
         } catch {
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-            }
+            errorMessage = error.localizedDescription
             print("❌ Error fetching contacts: \(error.localizedDescription)")
         }
 
-        await MainActor.run { isLoading = false }
+        isLoading = false
     }
 
     // MARK: - Search Users
@@ -97,9 +93,10 @@ class ContactService {
 
     /// Add a user as a contact
     /// - Parameter username: Username to add
+    @MainActor
     func addContact(username: String) async -> Bool {
-        await MainActor.run { isLoading = true }
-        await MainActor.run { errorMessage = nil }
+        isLoading = true
+        errorMessage = nil
 
         do {
             struct AddContactRequest: Encodable {
@@ -117,21 +114,17 @@ class ContactService {
                 print("✅ Added contact: \(username)")
                 // Refresh contacts list (force refresh to get new contact)
                 await fetchContacts(forceRefresh: true)
-                await MainActor.run { isLoading = false }
+                isLoading = false
                 return true
             } else {
-                await MainActor.run {
-                    errorMessage = response.error ?? "Failed to add contact"
-                    isLoading = false
-                }
+                errorMessage = response.error ?? "Failed to add contact"
+                isLoading = false
                 print("❌ Error: \(errorMessage ?? "Unknown")")
                 return false
             }
         } catch {
-            await MainActor.run {
-                errorMessage = error.localizedDescription
-                isLoading = false
-            }
+            errorMessage = error.localizedDescription
+            isLoading = false
             print("❌ Error adding contact: \(error.localizedDescription)")
             return false
         }
@@ -141,6 +134,7 @@ class ContactService {
 
     /// Remove a contact
     /// - Parameter contactId: ID of the contact to remove
+    @MainActor
     func removeContact(contactId: Int) async -> Bool {
         isLoading = true
         errorMessage = nil

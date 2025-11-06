@@ -11,7 +11,14 @@ struct MessageHistoryView: View {
     @Environment(\.dismiss) var dismiss
     @State private var messages: [Message] = []
     @State private var isLoading = false
+    @State private var isLoadingMore = false
     @State private var errorMessage: String?
+    @State private var hasMoreMessages = true
+
+    private let pageSize = 20
+    private var currentOffset: Int {
+        messages.count
+    }
 
     var body: some View {
         NavigationStack {
@@ -48,15 +55,41 @@ struct MessageHistoryView: View {
             Section {
                 ForEach(messages) { message in
                     messageRow(message)
+                        .onAppear {
+                            // Load more when scrolling near the end
+                            if message.id == messages.last?.id {
+                                Task {
+                                    await loadMoreMessages()
+                                }
+                            }
+                        }
+                }
+
+                // Loading indicator at bottom
+                if isLoadingMore {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .controlSize(.small)
+                        Text("Loading more...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                    }
+                    .padding(.vertical, 8)
                 }
             } header: {
                 Text("Recent Messages")
             } footer: {
-                Text("Showing last \(messages.count) messages")
+                if hasMoreMessages && !isLoadingMore {
+                    Text("Scroll to load more")
+                } else if !hasMoreMessages {
+                    Text("All messages loaded")
+                }
             }
         }
         .refreshable {
-            await loadMessages()
+            await refreshMessages()
         }
     }
 
@@ -146,8 +179,36 @@ struct MessageHistoryView: View {
         isLoading = true
         errorMessage = nil
 
-        messages = await MessagingService.shared.fetchMessageHistory(limit: 50)
+        let fetchedMessages = await MessagingService.shared.fetchMessageHistory(limit: pageSize, offset: 0)
+
+        messages = fetchedMessages
+        hasMoreMessages = fetchedMessages.count == pageSize
         isLoading = false
+    }
+
+    private func loadMoreMessages() async {
+        // Don't load if already loading or no more messages
+        guard !isLoadingMore && !isLoading && hasMoreMessages else { return }
+
+        isLoadingMore = true
+
+        let newMessages = await MessagingService.shared.fetchMessageHistory(limit: pageSize, offset: currentOffset)
+
+        // Append new messages (avoiding duplicates)
+        let uniqueNewMessages = newMessages.filter { newMsg in
+            !messages.contains { $0.id == newMsg.id }
+        }
+        messages.append(contentsOf: uniqueNewMessages)
+
+        hasMoreMessages = newMessages.count == pageSize
+        isLoadingMore = false
+    }
+
+    private func refreshMessages() async {
+        // Reset and load from scratch
+        messages = []
+        hasMoreMessages = true
+        await loadMessages()
     }
 }
 

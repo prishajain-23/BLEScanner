@@ -79,22 +79,24 @@ class MessagingService {
 
     // MARK: - Message History
 
-    /// Fetch message history from backend
-    /// - Parameter limit: Maximum number of messages to fetch
+    /// Fetch message history from backend (with pagination support)
+    /// - Parameters:
+    ///   - limit: Maximum number of messages to fetch (default 20)
+    ///   - offset: Number of messages to skip (for pagination, default 0)
     /// - Returns: Array of messages
-    func fetchMessageHistory(limit: Int = 50) async -> [Message] {
+    func fetchMessageHistory(limit: Int = 20, offset: Int = 0) async -> [Message] {
         guard await AuthService.shared.isAuthenticated else {
             print("⚠️ MessagingService: User not authenticated")
             return []
         }
 
-        let endpoint = APIEndpoints.messageHistory + "?limit=\(limit)"
+        let endpoint = APIEndpoints.messageHistory + "?limit=\(limit)&offset=\(offset)"
 
         do {
             let response: MessageHistoryResponse = try await apiClient.get(endpoint: endpoint, requiresAuth: true)
 
             if response.success, let messages = response.messages {
-                print("✅ Fetched \(messages.count) messages")
+                print("✅ Fetched \(messages.count) messages (offset: \(offset))")
                 return messages
             } else {
                 print("❌ Failed to fetch message history")

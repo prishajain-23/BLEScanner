@@ -16,6 +16,8 @@ struct AddContactView: View {
     @State private var showSuccess = false
     @State private var successMessage = ""
 
+    private let searchDebouncer = Debouncer(delay: .milliseconds(400))
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -66,8 +68,24 @@ struct AddContactView: View {
                     .autocapitalization(.none)
                     .autocorrectionDisabled()
                     .submitLabel(.search)
+                    .onChange(of: searchQuery) { oldValue, newValue in
+                        guard !newValue.isEmpty else {
+                            searchResults = []
+                            return
+                        }
+                        // Debounce search to avoid excessive API calls
+                        Task {
+                            await searchDebouncer.submit {
+                                await performSearch(query: newValue)
+                            }
+                        }
+                    }
                     .onSubmit {
-                        performSearch()
+                        // Allow immediate search on submit
+                        Task {
+                            await searchDebouncer.cancel()
+                            await performSearch(query: searchQuery)
+                        }
                     }
 
                 if !searchQuery.isEmpty {
@@ -155,12 +173,23 @@ struct AddContactView: View {
 
     // MARK: - Actions
 
-    private func performSearch() {
-        guard !searchQuery.isEmpty else { return }
+    private func performSearch(query: String) async {
+        guard !query.isEmpty else {
+            await MainActor.run {
+                searchResults = []
+                isSearching = false
+            }
+            return
+        }
 
-        isSearching = true
-        Task {
-            searchResults = await contactService.searchUsers(query: searchQuery)
+        await MainActor.run {
+            isSearching = true
+        }
+
+        let results = await contactService.searchUsers(query: query)
+
+        await MainActor.run {
+            searchResults = results
             isSearching = false
         }
     }

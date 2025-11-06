@@ -13,9 +13,12 @@ struct ContentView: View {
     @State private var shortcutManager = ShortcutManager()
     @State private var bleManager: BLEManager
     @State private var searchText = ""
+    @State private var filteredResults: [DiscoveredPeripheral] = []
     @State private var showSettings = false
     @State private var showAutomationGuide = false
     @Environment(\.scenePhase) var scenePhase
+
+    private let searchDebouncer = Debouncer(delay: .milliseconds(150))
 
     init() {
         let notifManager = NotificationManager()
@@ -162,10 +165,18 @@ struct ContentView: View {
         HStack {
             TextField("Search devices", text: $searchText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .onChange(of: searchText) { oldValue, newValue in
+                    Task {
+                        await searchDebouncer.submit {
+                            await filterPeripherals(query: newValue)
+                        }
+                    }
+                }
 
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
+                    filteredResults = bleManager.discoveredPeripherals
                 }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
@@ -174,11 +185,15 @@ struct ContentView: View {
             }
         }
         .padding()
+        .task {
+            // Initialize with all peripherals
+            filteredResults = bleManager.discoveredPeripherals
+        }
     }
 
     // MARK: - Device List
     private var deviceList: some View {
-        List(filteredPeripherals, id: \.peripheral.identifier) { discoveredPeripheral in
+        List(filteredResults, id: \.peripheral.identifier) { discoveredPeripheral in
             DeviceRow(
                 peripheral: discoveredPeripheral.peripheral,
                 advertisedData: discoveredPeripheral.advertisedData,
@@ -197,14 +212,39 @@ struct ContentView: View {
             )
         }
         .listStyle(.plain)
+        .onChange(of: bleManager.discoveredPeripherals) { oldValue, newValue in
+            // Update filtered results when peripherals change
+            if searchText.isEmpty {
+                filteredResults = newValue
+            } else {
+                Task {
+                    await filterPeripherals(query: searchText)
+                }
+            }
+        }
     }
 
-    private var filteredPeripherals: [DiscoveredPeripheral] {
-        if searchText.isEmpty {
-            return bleManager.discoveredPeripherals
-        }
-        return bleManager.discoveredPeripherals.filter {
-            $0.peripheral.name?.lowercased().contains(searchText.lowercased()) == true
+    // MARK: - Helper Functions
+
+    /// Filter peripherals in background thread to avoid blocking UI
+    @Sendable
+    private func filterPeripherals(query: String) async {
+        let peripherals = bleManager.discoveredPeripherals
+
+        // Perform filtering off main thread
+        let filtered = await Task.detached {
+            if query.isEmpty {
+                return peripherals
+            }
+            let lowercasedQuery = query.lowercased()
+            return peripherals.filter {
+                $0.peripheral.name?.lowercased().contains(lowercasedQuery) == true
+            }
+        }.value
+
+        // Update UI on main thread
+        await MainActor.run {
+            filteredResults = filtered
         }
     }
 
