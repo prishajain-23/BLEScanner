@@ -61,3 +61,7 @@ server/npm-debug.log*
 server/.pm2/
 server/ecosystem.config.js
 server/coverage/
+
+# APNs Private Keys (NEVER COMMIT THESE!)
+server/config/*.p8
+*.p8
