@@ -95,12 +95,18 @@ struct MessageHistoryView: View {
 
     private func messageRow(_ message: Message) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Header: Username and timestamp
+            // Header: Direction and timestamp
             HStack {
                 Label {
-                    Text(message.isSent ? "To: \(message.fromUsername)" : "From: \(message.fromUsername)")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                    if message.isSent {
+                        Text("Sent")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    } else {
+                        Text("From: \(message.fromUsername)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    }
                 } icon: {
                     Image(systemName: message.isSent ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
                         .foregroundStyle(message.isSent ? .blue : .green)
