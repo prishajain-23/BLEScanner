@@ -8,25 +8,34 @@
 import Foundation
 import Observation
 
-@MainActor
 @Observable
 class ContactService {
     static let shared = ContactService()
 
-    var contacts: [Contact] = []
-    var isLoading = false
-    var errorMessage: String?
+    @MainActor var contacts: [Contact] = []
+    @MainActor var isLoading = false
+    @MainActor var errorMessage: String?
 
     private let apiClient = APIClient.shared
+    private var lastFetchTime: Date?
+    private let cacheTimeout: TimeInterval = 60 // Cache for 60 seconds
 
     private init() {}
 
     // MARK: - Fetch Contacts
 
-    /// Fetch the user's contact list
-    func fetchContacts() async {
-        isLoading = true
-        errorMessage = nil
+    /// Fetch the user's contact list (with caching)
+    func fetchContacts(forceRefresh: Bool = false) async {
+        // Check cache first
+        if !forceRefresh,
+           let lastFetch = lastFetchTime,
+           Date().timeIntervalSince(lastFetch) < cacheTimeout {
+            print("📦 Using cached contacts (\(await contacts.count) contacts)")
+            return
+        }
+
+        await MainActor.run { isLoading = true }
+        await MainActor.run { errorMessage = nil }
 
         do {
             let response: ContactsResponse = try await apiClient.get(
@@ -35,18 +44,25 @@ class ContactService {
             )
 
             if response.success, let fetchedContacts = response.contacts {
-                contacts = fetchedContacts
+                await MainActor.run {
+                    contacts = fetchedContacts
+                }
+                lastFetchTime = Date()
                 print("✅ Fetched \(fetchedContacts.count) contacts")
             } else {
-                errorMessage = response.error ?? "Failed to fetch contacts"
+                await MainActor.run {
+                    errorMessage = response.error ?? "Failed to fetch contacts"
+                }
                 print("❌ Error: \(errorMessage ?? "Unknown")")
             }
         } catch {
-            errorMessage = error.localizedDescription
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+            }
             print("❌ Error fetching contacts: \(error.localizedDescription)")
         }
 
-        isLoading = false
+        await MainActor.run { isLoading = false }
     }
 
     // MARK: - Search Users
@@ -82,8 +98,8 @@ class ContactService {
     /// Add a user as a contact
     /// - Parameter username: Username to add
     func addContact(username: String) async -> Bool {
-        isLoading = true
-        errorMessage = nil
+        await MainActor.run { isLoading = true }
+        await MainActor.run { errorMessage = nil }
 
         do {
             struct AddContactRequest: Encodable {
@@ -99,20 +115,24 @@ class ContactService {
 
             if response.success {
                 print("✅ Added contact: \(username)")
-                // Refresh contacts list
-                await fetchContacts()
-                isLoading = false
+                // Refresh contacts list (force refresh to get new contact)
+                await fetchContacts(forceRefresh: true)
+                await MainActor.run { isLoading = false }
                 return true
             } else {
-                errorMessage = response.error ?? "Failed to add contact"
+                await MainActor.run {
+                    errorMessage = response.error ?? "Failed to add contact"
+                    isLoading = false
+                }
                 print("❌ Error: \(errorMessage ?? "Unknown")")
-                isLoading = false
                 return false
             }
         } catch {
-            errorMessage = error.localizedDescription
+            await MainActor.run {
+                errorMessage = error.localizedDescription
+                isLoading = false
+            }
             print("❌ Error adding contact: \(error.localizedDescription)")
-            isLoading = false
             return false
         }
     }

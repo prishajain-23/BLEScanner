@@ -107,7 +107,7 @@ struct MessageHistoryView: View {
                     Text(message.read == true ? "Read" : "Unread")
                         .font(.caption2)
                 }
-                .foregroundStyle(message.read == true ? .secondary : .blue)
+                .foregroundStyle(message.read == true ? Color.secondary : Color.blue)
             }
         }
         .padding(.vertical, 4)
@@ -146,13 +146,8 @@ struct MessageHistoryView: View {
         isLoading = true
         errorMessage = nil
 
-        do {
-            messages = await MessagingService.shared.fetchMessageHistory(limit: 50)
-            isLoading = false
-        } catch {
-            errorMessage = error.localizedDescription
-            isLoading = false
-        }
+        messages = await MessagingService.shared.fetchMessageHistory(limit: 50)
+        isLoading = false
     }
 }
 

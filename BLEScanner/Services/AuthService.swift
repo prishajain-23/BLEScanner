@@ -20,7 +20,7 @@ class AuthService {
 
     private init() {
         // Check if user is already logged in
-        if let token = KeychainHelper.shared.getToken(),
+        if KeychainHelper.shared.getToken() != nil,
            let username = KeychainHelper.shared.getUsername() {
             isAuthenticated = true
             // Create a placeholder user object
