@@ -35,10 +35,12 @@ struct Contact: Codable, Identifiable {
     let username: String
     let nickname: String?
     let addedAt: Date?
+    var isSelectedForMessaging: Bool? // Local-only property for UI state
 
     enum CodingKeys: String, CodingKey {
         case id, username, nickname
         case addedAt = "added_at"
+        // isSelectedForMessaging is not encoded/decoded (local state only)
     }
 }
 

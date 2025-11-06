@@ -66,7 +66,14 @@ class MessagingService {
     ///   - deviceName: Name of the BLE device
     ///   - contactIds: Array of contact IDs to send to
     func sendConnectionMessage(deviceName: String, contactIds: [Int]) async {
-        let message = "\(deviceName) connected"
+        // Get message template from UserDefaults, or use default
+        let template = UserDefaults.standard.string(forKey: "messageTemplate") ?? "{device} connected"
+
+        // Replace template variables
+        let message = template
+            .replacingOccurrences(of: "{device}", with: deviceName)
+            .replacingOccurrences(of: "{time}", with: Date().formatted(date: .omitted, time: .shortened))
+
         await sendMessage(toUserIds: contactIds, message: message, deviceName: deviceName)
     }
 

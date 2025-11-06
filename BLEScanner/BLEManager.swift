@@ -65,7 +65,6 @@ class BLEManager: NSObject {
 
     // Messaging
     var messagingEnabled: Bool = true
-    var messagingContactIds: [Int] = [] // MVP: Hardcoded contact IDs
 
     // MARK: - Initialization
     init(notificationManager: NotificationManager, shortcutManager: ShortcutManager) {
@@ -355,13 +354,16 @@ extension BLEManager: CBCentralManagerDelegate {
         notificationManager.sendConnectionNotification(deviceName: deviceName)
 
         // Send message to contacts (if enabled)
-        if messagingEnabled && !messagingContactIds.isEmpty {
+        if messagingEnabled {
             Task { @MainActor in
                 if AuthService.shared.isAuthenticated {
-                    await MessagingService.shared.sendConnectionMessage(
-                        deviceName: deviceName,
-                        contactIds: messagingContactIds
-                    )
+                    let contactIds = ContactService.shared.selectedContactIds
+                    if !contactIds.isEmpty {
+                        await MessagingService.shared.sendConnectionMessage(
+                            deviceName: deviceName,
+                            contactIds: contactIds
+                        )
+                    }
                 }
             }
         }
