@@ -55,6 +55,7 @@ struct Message: Codable, Identifiable {
     let isSent: Bool
     let read: Bool?
     let readAt: Date?
+    let toUsernames: [String]? // Recipients (for sent messages)
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -66,6 +67,7 @@ struct Message: Codable, Identifiable {
         case isSent = "is_sent"
         case read
         case readAt = "read_at"
+        case toUsernames = "to_usernames"
     }
 }
 

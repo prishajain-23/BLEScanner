@@ -57,7 +57,7 @@ class MessageService {
    * @returns {Promise<Object>} - Messages and metadata
    */
   async getMessageHistory(userId, limit = 50, offset = 0) {
-    // Get messages sent by user
+    // Get messages sent by user (with recipients)
     const sentMessages = await pool.query(
       `SELECT
         m.id,
@@ -66,10 +66,14 @@ class MessageService {
         m.message_text,
         m.device_name,
         m.created_at,
-        true as is_sent
+        true as is_sent,
+        ARRAY_AGG(ru.username) as to_usernames
       FROM messages m
       JOIN users u ON m.from_user_id = u.id
+      LEFT JOIN message_recipients mr ON m.id = mr.message_id
+      LEFT JOIN users ru ON mr.to_user_id = ru.id
       WHERE m.from_user_id = $1
+      GROUP BY m.id, u.username
       ORDER BY m.created_at DESC`,
       [userId]
     );

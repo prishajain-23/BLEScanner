@@ -99,9 +99,15 @@ struct MessageHistoryView: View {
             HStack {
                 Label {
                     if message.isSent {
-                        Text("Sent")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
+                        if let recipients = message.toUsernames, !recipients.isEmpty {
+                            Text("To: \(recipients.joined(separator: ", "))")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                        } else {
+                            Text("Sent")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                        }
                     } else {
                         Text("From: \(message.fromUsername)")
                             .font(.subheadline)
