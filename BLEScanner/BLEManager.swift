@@ -63,6 +63,9 @@ class BLEManager: NSObject {
     let notificationManager: NotificationManager
     let shortcutManager: ShortcutManager
 
+    // Messaging
+    var messagingEnabled: Bool = true
+
     // MARK: - Initialization
     init(notificationManager: NotificationManager, shortcutManager: ShortcutManager) {
         self.notificationManager = notificationManager
@@ -349,6 +352,21 @@ extension BLEManager: CBCentralManagerDelegate {
 
         // Send notification
         notificationManager.sendConnectionNotification(deviceName: deviceName)
+
+        // Send message to contacts (if enabled)
+        if messagingEnabled {
+            Task { @MainActor in
+                if AuthService.shared.isAuthenticated {
+                    let contactIds = ContactService.shared.selectedContactIds
+                    if !contactIds.isEmpty {
+                        await MessagingService.shared.sendConnectionMessage(
+                            deviceName: deviceName,
+                            contactIds: contactIds
+                        )
+                    }
+                }
+            }
+        }
 
         // Discover services
         peripheral.discoverServices(nil)

@@ -13,9 +13,12 @@ struct ContentView: View {
     @State private var shortcutManager = ShortcutManager()
     @State private var bleManager: BLEManager
     @State private var searchText = ""
+    @State private var filteredResults: [DiscoveredPeripheral] = []
     @State private var showSettings = false
     @State private var showAutomationGuide = false
     @Environment(\.scenePhase) var scenePhase
+
+    private let searchDebouncer = Debouncer(delay: .milliseconds(150))
 
     init() {
         let notifManager = NotificationManager()
@@ -162,6 +165,13 @@ struct ContentView: View {
         HStack {
             TextField("Search devices", text: $searchText)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+                .onChange(of: searchText) { oldValue, newValue in
+                    Task {
+                        await searchDebouncer.submit {
+                            await filterPeripherals(query: newValue)
+                        }
+                    }
+                }
 
             if !searchText.isEmpty {
                 Button(action: {
@@ -178,7 +188,8 @@ struct ContentView: View {
 
     // MARK: - Device List
     private var deviceList: some View {
-        List(filteredPeripherals, id: \.peripheral.identifier) { discoveredPeripheral in
+        List(searchText.isEmpty ? bleManager.discoveredPeripherals : filteredResults,
+             id: \.peripheral.identifier) { discoveredPeripheral in
             DeviceRow(
                 peripheral: discoveredPeripheral.peripheral,
                 advertisedData: discoveredPeripheral.advertisedData,
@@ -199,12 +210,27 @@ struct ContentView: View {
         .listStyle(.plain)
     }
 
-    private var filteredPeripherals: [DiscoveredPeripheral] {
-        if searchText.isEmpty {
-            return bleManager.discoveredPeripherals
-        }
-        return bleManager.discoveredPeripherals.filter {
-            $0.peripheral.name?.lowercased().contains(searchText.lowercased()) == true
+    // MARK: - Helper Functions
+
+    /// Filter peripherals in background thread to avoid blocking UI
+    @Sendable
+    private func filterPeripherals(query: String) async {
+        let peripherals = bleManager.discoveredPeripherals
+
+        // Perform filtering off main thread
+        let filtered = await Task.detached {
+            if query.isEmpty {
+                return peripherals
+            }
+            let lowercasedQuery = query.lowercased()
+            return peripherals.filter {
+                $0.peripheral.name?.lowercased().contains(lowercasedQuery) == true
+            }
+        }.value
+
+        // Update UI on main thread
+        await MainActor.run {
+            filteredResults = filtered
         }
     }
 
@@ -381,6 +407,31 @@ struct SettingsView: View {
                     Text("iOS Shortcuts (Foreground Only)")
                 } footer: {
                     Text("This shortcut runs only when the app is in the foreground. For background automation, enable notifications above and create a Shortcuts automation triggered by the 'ESP32 Connected' notification.")
+                }
+
+                // Messaging Section
+                Section {
+                    if AuthService.shared.isAuthenticated {
+                        NavigationLink {
+                            MessagingSettingsView(bleManager: bleManager)
+                        } label: {
+                            Label("Messaging", systemImage: "envelope.fill")
+                        }
+
+                        HStack {
+                            Text("Auto-Send")
+                            Spacer()
+                            Text(bleManager.messagingEnabled ? "Enabled" : "Disabled")
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        Text("Login to enable messaging")
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Auto-Messaging")
+                } footer: {
+                    Text("Automatically send messages to contacts when your ESP32 device connects")
                 }
 
                 Section {

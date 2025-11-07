@@ -17,9 +17,15 @@ enum ConnectionState {
 }
 
 // MARK: - Discovered Peripheral
-struct DiscoveredPeripheral {
+struct DiscoveredPeripheral: Equatable {
     var peripheral: CBPeripheral
     var advertisedData: String
+
+    // Equatable conformance - compare by peripheral identifier
+    static func == (lhs: DiscoveredPeripheral, rhs: DiscoveredPeripheral) -> Bool {
+        lhs.peripheral.identifier == rhs.peripheral.identifier &&
+        lhs.advertisedData == rhs.advertisedData
+    }
 }
 
 // MARK: - BLE Configuration
