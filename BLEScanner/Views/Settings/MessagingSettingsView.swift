@@ -10,6 +10,7 @@ import SwiftUI
 struct MessagingSettingsView: View {
     @Environment(\.dismiss) var dismiss
     @State private var contactService = ContactService.shared
+    @State private var pushService = PushNotificationService.shared
     var bleManager: BLEManager
 
     @State private var showContacts = false
@@ -27,6 +28,9 @@ struct MessagingSettingsView: View {
 
                 // Message template
                 messageTemplateSection
+
+                // Push notification status
+                pushNotificationSection
 
                 // User profile
                 if AuthService.shared.isAuthenticated {
@@ -203,6 +207,49 @@ struct MessagingSettingsView: View {
             .foregroundStyle(.primary)
         } header: {
             Text("History")
+        }
+    }
+
+    // MARK: - Push Notification Section
+
+    private var pushNotificationSection: some View {
+        Section {
+            HStack {
+                Label("Push Notifications", systemImage: "bell.fill")
+                Spacer()
+                if pushService.isRegistered {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                    Text("Enabled")
+                        .foregroundStyle(.secondary)
+                } else {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.red)
+                    Text("Disabled")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if let token = pushService.deviceToken {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Device Token")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text(String(token.prefix(20)) + "...")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                }
+            }
+
+            if !pushService.isRegistered {
+                Button("Enable Push Notifications") {
+                    pushService.registerForRemoteNotifications()
+                }
+            }
+        } header: {
+            Text("Notifications")
+        } footer: {
+            Text("Push notifications let you receive messages from contacts even when the app is closed")
         }
     }
 

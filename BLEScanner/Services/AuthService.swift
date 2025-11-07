@@ -55,6 +55,9 @@ class AuthService {
                 // Update state
                 currentUser = user
                 isAuthenticated = true
+
+                // Notify observers (for push notification registration)
+                NotificationCenter.default.post(name: NSNotification.Name("UserDidLogin"), object: nil)
             } else {
                 errorMessage = response.error ?? "Registration failed"
             }
@@ -92,6 +95,9 @@ class AuthService {
                 // Update state
                 currentUser = user
                 isAuthenticated = true
+
+                // Notify observers (for push notification registration)
+                NotificationCenter.default.post(name: NSNotification.Name("UserDidLogin"), object: nil)
             } else {
                 errorMessage = response.error ?? "Login failed"
             }
@@ -105,6 +111,11 @@ class AuthService {
     // MARK: - Logout
 
     func logout() {
+        // Unregister push token
+        Task {
+            await PushNotificationService.shared.unregisterFromBackend()
+        }
+
         _ = KeychainHelper.shared.clearAll()
         isAuthenticated = false
         currentUser = nil

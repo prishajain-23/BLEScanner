@@ -44,6 +44,21 @@ struct MessageHistoryView: View {
             }
             .task {
                 await loadMessages()
+                setupNotificationObserver()
+            }
+        }
+    }
+
+    // MARK: - Notification Observer
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("NewMessageReceived"),
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task {
+                await refreshMessages()
             }
         }
     }
