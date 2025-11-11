@@ -12,15 +12,20 @@ struct BLEScannerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var authService = AuthService.shared
     @State private var pushService = PushNotificationService.shared
+    @State private var notificationManager = NotificationManager()
+    @State private var shortcutManager = ShortcutManager()
 
     var body: some Scene {
         WindowGroup {
             if authService.isAuthenticated {
-                ContentView()
-                    .onAppear {
-                        // Register for push notifications after login
-                        pushService.registerForRemoteNotifications()
-                    }
+                MainTabView(bleManager: BLEManager(
+                    notificationManager: notificationManager,
+                    shortcutManager: shortcutManager
+                ))
+                .onAppear {
+                    // Register for push notifications after login
+                    pushService.registerForRemoteNotifications()
+                }
             } else {
                 AuthView()
             }
