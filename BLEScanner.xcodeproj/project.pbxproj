@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		96F75A072962D9EF00D36D9F /* BLEScannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F75A062962D9EF00D36D9F /* BLEScannerApp.swift */; };
-		96F75A092962D9EF00D36D9F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F75A082962D9EF00D36D9F /* ContentView.swift */; };
 		96F75A0B2962D9F100D36D9F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96F75A0A2962D9F100D36D9F /* Assets.xcassets */; };
 		96F75A0F2962D9F100D36D9F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96F75A0E2962D9F100D36D9F /* Preview Assets.xcassets */; };
 		9F25ECE62EBDBACF0070318E /* PUSH_NOTIFICATIONS_SETUP.md in Resources */ = {isa = PBXBuildFile; fileRef = 9F25ECE22EBDBACF0070318E /* PUSH_NOTIFICATIONS_SETUP.md */; };
@@ -19,16 +18,22 @@
 		9F25ECEC2EBDBAF60070318E /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F25ECEB2EBDBAF60070318E /* PushNotificationService.swift */; };
 		9F25ECEE2EBDBB190070318E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F25ECED2EBDBB190070318E /* AppDelegate.swift */; };
 		9F4F8E4F2EBC6B1500DC4612 /* MessagingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E4E2EBC6B1500DC4612 /* MessagingService.swift */; };
-		9F4F8E572EBC73BD00DC4612 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E502EBC73BD00DC4612 /* AddContactView.swift */; };
-		9F4F8E582EBC73BD00DC4612 /* MessageHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E532EBC73BD00DC4612 /* MessageHistoryView.swift */; };
-		9F4F8E592EBC73BD00DC4612 /* MessagingSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E552EBC73BD00DC4612 /* MessagingSettingsView.swift */; };
-		9F4F8E5A2EBC73BD00DC4612 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E512EBC73BD00DC4612 /* ContactListView.swift */; };
 		9F4F8E5C2EBC73ED00DC4612 /* ContactService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4F8E5B2EBC73ED00DC4612 /* ContactService.swift */; };
 		9F5724A32EBCF54D00E94327 /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5724A22EBCF54D00E94327 /* Debouncer.swift */; };
 		9F59AD0B2EC2F9C7007798A5 /* CryptoKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD092EC2F9C7007798A5 /* CryptoKeyManager.swift */; };
 		9F59AD0C2EC2F9C7007798A5 /* CryptoEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD082EC2F9C7007798A5 /* CryptoEncryptionService.swift */; };
+		9F59AD1E2EC31B4C007798A5 /* ConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD0F2EC31B4C007798A5 /* ConnectionsView.swift */; };
+		9F59AD1F2EC31B4C007798A5 /* AutomationGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD1A2EC31B4C007798A5 /* AutomationGuideView.swift */; };
+		9F59AD202EC31B4C007798A5 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD0D2EC31B4C007798A5 /* AuthView.swift */; };
+		9F59AD212EC31B4C007798A5 /* ContactListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD122EC31B4C007798A5 /* ContactListView.swift */; };
+		9F59AD222EC31B4C007798A5 /* SettingsTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD182EC31B4C007798A5 /* SettingsTabView.swift */; };
+		9F59AD232EC31B4C007798A5 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD1C2EC31B4C007798A5 /* MainTabView.swift */; };
+		9F59AD242EC31B4C007798A5 /* MessagesTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD152EC31B4C007798A5 /* MessagesTabView.swift */; };
+		9F59AD252EC31B4C007798A5 /* MessagingSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD172EC31B4C007798A5 /* MessagingSettingsView.swift */; };
+		9F59AD262EC31B4C007798A5 /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD112EC31B4C007798A5 /* AddContactView.swift */; };
+		9F59AD272EC31B4C007798A5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD1B2EC31B4C007798A5 /* ContentView.swift */; };
+		9F59AD282EC31B4C007798A5 /* MessageHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F59AD142EC31B4C007798A5 /* MessageHistoryView.swift */; };
 		9F68B0FA2EBAFF9200F69A12 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F12EBAFF9200F69A12 /* APIClient.swift */; };
-		9F68B0FB2EBAFF9200F69A12 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F72EBAFF9200F69A12 /* AuthView.swift */; };
 		9F68B0FC2EBAFF9200F69A12 /* MessagingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0EF2EBAFF9200F69A12 /* MessagingModels.swift */; };
 		9F68B0FD2EBAFF9200F69A12 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F52EBAFF9200F69A12 /* APIConstants.swift */; };
 		9F68B0FE2EBAFF9200F69A12 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F32EBAFF9200F69A12 /* KeychainHelper.swift */; };
@@ -37,7 +42,6 @@
 		9F7FD2172EB997FE000D24EF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2142EB997FE000D24EF /* NotificationManager.swift */; };
 		9F7FD2182EB997FE000D24EF /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2152EB997FE000D24EF /* ShortcutManager.swift */; };
 		9F7FD2192EB997FE000D24EF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2132EB997FE000D24EF /* Models.swift */; };
-		9F7FD21D2EB999B6000D24EF /* AutomationGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD21C2EB999B6000D24EF /* AutomationGuideView.swift */; };
 		9F7FD2202EB9A7EB000D24EF /* CheckConnectionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD21F2EB9A7EB000D24EF /* CheckConnectionIntent.swift */; };
 		9FB2525C2EBAD9ED009DA72F /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 9FB252592EBAD9ED009DA72F /* CLAUDE.md */; };
 		9FB2525D2EBAD9ED009DA72F /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = 9FB2525A2EBAD9ED009DA72F /* LICENSE.md */; };
@@ -68,6 +72,17 @@
 		9F5724A22EBCF54D00E94327 /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		9F59AD082EC2F9C7007798A5 /* CryptoEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoEncryptionService.swift; sourceTree = "<group>"; };
 		9F59AD092EC2F9C7007798A5 /* CryptoKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoKeyManager.swift; sourceTree = "<group>"; };
+		9F59AD0D2EC31B4C007798A5 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		9F59AD0F2EC31B4C007798A5 /* ConnectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsView.swift; sourceTree = "<group>"; };
+		9F59AD112EC31B4C007798A5 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
+		9F59AD122EC31B4C007798A5 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
+		9F59AD142EC31B4C007798A5 /* MessageHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHistoryView.swift; sourceTree = "<group>"; };
+		9F59AD152EC31B4C007798A5 /* MessagesTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesTabView.swift; sourceTree = "<group>"; };
+		9F59AD172EC31B4C007798A5 /* MessagingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSettingsView.swift; sourceTree = "<group>"; };
+		9F59AD182EC31B4C007798A5 /* SettingsTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTabView.swift; sourceTree = "<group>"; };
+		9F59AD1A2EC31B4C007798A5 /* AutomationGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationGuideView.swift; sourceTree = "<group>"; };
+		9F59AD1B2EC31B4C007798A5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9F59AD1C2EC31B4C007798A5 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		9F68B0EF2EBAFF9200F69A12 /* MessagingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingModels.swift; sourceTree = "<group>"; };
 		9F68B0F12EBAFF9200F69A12 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		9F68B0F22EBAFF9200F69A12 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -131,6 +146,7 @@
 		96F75A052962D9EF00D36D9F /* BLEScanner */ = {
 			isa = PBXGroup;
 			children = (
+				9F59AD1D2EC31B4C007798A5 /* Views */,
 				9F25ECED2EBDBB190070318E /* AppDelegate.swift */,
 				96F75A062962D9EF00D36D9F /* BLEScannerApp.swift */,
 				9F4F8E522EBC73BD00DC4612 /* Contacts */,
@@ -164,8 +180,6 @@
 		9F4F8E522EBC73BD00DC4612 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
-				9F4F8E502EBC73BD00DC4612 /* AddContactView.swift */,
-				9F4F8E512EBC73BD00DC4612 /* ContactListView.swift */,
 			);
 			name = Contacts;
 			path = Views/Contacts;
@@ -174,7 +188,6 @@
 		9F4F8E542EBC73BD00DC4612 /* Messages */ = {
 			isa = PBXGroup;
 			children = (
-				9F4F8E532EBC73BD00DC4612 /* MessageHistoryView.swift */,
 			);
 			name = Messages;
 			path = Views/Messages;
@@ -183,7 +196,6 @@
 		9F4F8E562EBC73BD00DC4612 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				9F4F8E552EBC73BD00DC4612 /* MessagingSettingsView.swift */,
 			);
 			name = Settings;
 			path = Views/Settings;
@@ -196,6 +208,64 @@
 				9F59AD092EC2F9C7007798A5 /* CryptoKeyManager.swift */,
 			);
 			path = Signal;
+			sourceTree = "<group>";
+		};
+		9F59AD0E2EC31B4C007798A5 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD0D2EC31B4C007798A5 /* AuthView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		9F59AD102EC31B4C007798A5 /* Connections */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD0F2EC31B4C007798A5 /* ConnectionsView.swift */,
+			);
+			path = Connections;
+			sourceTree = "<group>";
+		};
+		9F59AD132EC31B4C007798A5 /* Contacts */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD112EC31B4C007798A5 /* AddContactView.swift */,
+				9F59AD122EC31B4C007798A5 /* ContactListView.swift */,
+			);
+			path = Contacts;
+			sourceTree = "<group>";
+		};
+		9F59AD162EC31B4C007798A5 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD142EC31B4C007798A5 /* MessageHistoryView.swift */,
+				9F59AD152EC31B4C007798A5 /* MessagesTabView.swift */,
+			);
+			path = Messages;
+			sourceTree = "<group>";
+		};
+		9F59AD192EC31B4C007798A5 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD172EC31B4C007798A5 /* MessagingSettingsView.swift */,
+				9F59AD182EC31B4C007798A5 /* SettingsTabView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		9F59AD1D2EC31B4C007798A5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9F59AD0E2EC31B4C007798A5 /* Auth */,
+				9F59AD102EC31B4C007798A5 /* Connections */,
+				9F59AD132EC31B4C007798A5 /* Contacts */,
+				9F59AD162EC31B4C007798A5 /* Messages */,
+				9F59AD192EC31B4C007798A5 /* Settings */,
+				9F59AD1A2EC31B4C007798A5 /* AutomationGuideView.swift */,
+				9F59AD1B2EC31B4C007798A5 /* ContentView.swift */,
+				9F59AD1C2EC31B4C007798A5 /* MainTabView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		9F68B0F02EBAFF9200F69A12 /* Models */ = {
@@ -232,7 +302,6 @@
 		9F68B0F82EBAFF9200F69A12 /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				9F68B0F72EBAFF9200F69A12 /* AuthView.swift */,
 			);
 			path = Auth;
 			sourceTree = "<group>";
@@ -240,8 +309,6 @@
 		9F68B0F92EBAFF9200F69A12 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				96F75A082962D9EF00D36D9F /* ContentView.swift */,
-				9F7FD21C2EB999B6000D24EF /* AutomationGuideView.swift */,
 				9F68B0F82EBAFF9200F69A12 /* Auth */,
 			);
 			path = Views;
@@ -325,27 +392,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				96F75A092962D9EF00D36D9F /* ContentView.swift in Sources */,
 				9F7FD2162EB997FE000D24EF /* BLEManager.swift in Sources */,
 				9F5724A32EBCF54D00E94327 /* Debouncer.swift in Sources */,
 				9F7FD2172EB997FE000D24EF /* NotificationManager.swift in Sources */,
 				9F4F8E4F2EBC6B1500DC4612 /* MessagingService.swift in Sources */,
 				9F7FD2182EB997FE000D24EF /* ShortcutManager.swift in Sources */,
 				9F7FD2192EB997FE000D24EF /* Models.swift in Sources */,
-				9F7FD21D2EB999B6000D24EF /* AutomationGuideView.swift in Sources */,
-				9F4F8E572EBC73BD00DC4612 /* AddContactView.swift in Sources */,
 				9F4F8E5C2EBC73ED00DC4612 /* ContactService.swift in Sources */,
-				9F4F8E582EBC73BD00DC4612 /* MessageHistoryView.swift in Sources */,
-				9F4F8E592EBC73BD00DC4612 /* MessagingSettingsView.swift in Sources */,
 				9F25ECEC2EBDBAF60070318E /* PushNotificationService.swift in Sources */,
-				9F4F8E5A2EBC73BD00DC4612 /* ContactListView.swift in Sources */,
 				9F7FD2202EB9A7EB000D24EF /* CheckConnectionIntent.swift in Sources */,
 				96F75A072962D9EF00D36D9F /* BLEScannerApp.swift in Sources */,
 				9F68B0FA2EBAFF9200F69A12 /* APIClient.swift in Sources */,
-				9F68B0FB2EBAFF9200F69A12 /* AuthView.swift in Sources */,
 				9F68B0FC2EBAFF9200F69A12 /* MessagingModels.swift in Sources */,
 				9F59AD0B2EC2F9C7007798A5 /* CryptoKeyManager.swift in Sources */,
 				9F59AD0C2EC2F9C7007798A5 /* CryptoEncryptionService.swift in Sources */,
+				9F59AD1E2EC31B4C007798A5 /* ConnectionsView.swift in Sources */,
+				9F59AD1F2EC31B4C007798A5 /* AutomationGuideView.swift in Sources */,
+				9F59AD202EC31B4C007798A5 /* AuthView.swift in Sources */,
+				9F59AD212EC31B4C007798A5 /* ContactListView.swift in Sources */,
+				9F59AD222EC31B4C007798A5 /* SettingsTabView.swift in Sources */,
+				9F59AD232EC31B4C007798A5 /* MainTabView.swift in Sources */,
+				9F59AD242EC31B4C007798A5 /* MessagesTabView.swift in Sources */,
+				9F59AD252EC31B4C007798A5 /* MessagingSettingsView.swift in Sources */,
+				9F59AD262EC31B4C007798A5 /* AddContactView.swift in Sources */,
+				9F59AD272EC31B4C007798A5 /* ContentView.swift in Sources */,
+				9F59AD282EC31B4C007798A5 /* MessageHistoryView.swift in Sources */,
 				9F68B0FD2EBAFF9200F69A12 /* APIConstants.swift in Sources */,
 				9F68B0FE2EBAFF9200F69A12 /* KeychainHelper.swift in Sources */,
 				9F68B0FF2EBAFF9200F69A12 /* AuthService.swift in Sources */,
