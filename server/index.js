@@ -34,6 +34,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/contacts', require('./routes/contacts'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/devices', require('./routes/devices'));
+app.use('/api/keys', require('./routes/keys'));
 
 // 404 handler
 app.use((req, res) => {
@@ -82,6 +83,9 @@ async function startServer() {
       console.log('  POST /api/messages/:id/read - Mark message as read');
       console.log('  POST /api/devices/register-push - Register device token');
       console.log('  DELETE /api/devices/unregister-push - Unregister device token');
+      console.log('  POST /api/keys/upload - Upload Signal Protocol keys');
+      console.log('  GET  /api/keys/bundle/:userId - Get prekey bundle');
+      console.log('  GET  /api/keys/status - Check key setup status');
       console.log('='.repeat(50));
       console.log('');
     });

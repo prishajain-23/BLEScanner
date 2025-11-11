@@ -49,13 +49,19 @@ struct Message: Codable, Identifiable {
     let id: Int
     let fromUserId: Int
     let fromUsername: String
-    let messageText: String
+    var messageText: String? // Optional and mutable for decryption
     let deviceName: String?
     let createdAt: Date
     let isSent: Bool
     let read: Bool?
     let readAt: Date?
     let toUsernames: [String]? // Recipients (for sent messages)
+
+    // Encryption fields
+    let encryptedPayload: String?
+    let senderRatchetKey: String?
+    let counter: Int?
+    let encryptionVersion: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -68,6 +74,10 @@ struct Message: Codable, Identifiable {
         case read
         case readAt = "read_at"
         case toUsernames = "to_usernames"
+        case encryptedPayload = "encrypted_payload"
+        case senderRatchetKey = "sender_ratchet_key"
+        case counter
+        case encryptionVersion = "encryption_version"
     }
 }
 

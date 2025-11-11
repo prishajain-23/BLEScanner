@@ -12,12 +12,14 @@ class MessagingService {
     static let shared = MessagingService()
 
     private let apiClient = APIClient.shared
+    private let encryptionService = CryptoEncryptionService.shared
+    private let keyManager = CryptoKeyManager.shared
 
     private init() {}
 
     // MARK: - Send Message
 
-    /// Send a message to specified users
+    /// Send a message to specified users (encrypted)
     /// - Parameters:
     ///   - toUserIds: Array of recipient user IDs
     ///   - message: Message text to send
@@ -35,28 +37,49 @@ class MessagingService {
             return false
         }
 
-        let endpoint = APIEndpoints.sendMessage
-
-        let payload = SendMessageRequest(
-            toUserIds: toUserIds,
-            message: message,
-            deviceName: deviceName ?? "Unknown Device"
-        )
-
-        print("📤 Sending message to \(toUserIds.count) recipient(s): \"\(message)\"")
+        print("📤 Encrypting and sending message to \(toUserIds.count) recipient(s)")
 
         do {
-            let response: MessageSendResponse = try await apiClient.post(endpoint: endpoint, body: payload, requiresAuth: true)
+            // Check if user has encryption keys set up
+            if !keyManager.hasKeys() {
+                print("⚠️ No encryption keys found, setting up...")
+                try await keyManager.setupKeys()
+            }
 
-            if response.success, let message = response.message {
-                print("✅ Message sent successfully (ID: \(message.id))")
+            // Encrypt the message for each recipient
+            let encryptedMessages = try await encryptionService.encryptMessage(message, for: toUserIds)
+
+            // Convert to API format
+            let messagesPayload = encryptedMessages.map { encrypted in
+                EncryptedMessagePayload(
+                    toUserId: encrypted.userId,
+                    encryptedPayload: encrypted.encryptedPayload.base64EncodedString(),
+                    senderRatchetKey: encrypted.senderRatchetKey?.base64EncodedString(),
+                    counter: encrypted.counter
+                )
+            }
+
+            let payload = SendEncryptedMessageRequest(
+                messages: messagesPayload,
+                deviceName: deviceName ?? "Unknown Device"
+            )
+
+            // Send encrypted messages to backend
+            let response: MessageSendResponse = try await apiClient.post(
+                endpoint: APIEndpoints.sendEncryptedMessage,
+                body: payload,
+                requiresAuth: true
+            )
+
+            if response.success {
+                print("✅ Encrypted message sent successfully")
                 return true
             } else {
-                print("❌ Failed to send message: \(response.error ?? "Unknown error")")
+                print("❌ Failed to send encrypted message: \(response.error ?? "Unknown error")")
                 return false
             }
         } catch {
-            print("❌ Error sending message: \(error.localizedDescription)")
+            print("❌ Error sending encrypted message: \(error.localizedDescription)")
             return false
         }
     }
@@ -79,11 +102,11 @@ class MessagingService {
 
     // MARK: - Message History
 
-    /// Fetch message history from backend (with pagination support)
+    /// Fetch message history from backend (with pagination support and decryption)
     /// - Parameters:
     ///   - limit: Maximum number of messages to fetch (default 20)
     ///   - offset: Number of messages to skip (for pagination, default 0)
-    /// - Returns: Array of messages
+    /// - Returns: Array of messages (decrypted)
     func fetchMessageHistory(limit: Int = 20, offset: Int = 0) async -> [Message] {
         guard await AuthService.shared.isAuthenticated else {
             print("⚠️ MessagingService: User not authenticated")
@@ -97,7 +120,40 @@ class MessagingService {
 
             if response.success, let messages = response.messages {
                 print("✅ Fetched \(messages.count) messages (offset: \(offset))")
-                return messages
+
+                // Decrypt encrypted messages
+                var decryptedMessages: [Message] = []
+
+                for message in messages {
+                    var msg = message
+
+                    // Only decrypt received encrypted messages
+                    if !message.isSent && message.encryptionVersion == 1 {
+                        do {
+                            guard let encryptedPayload = message.encryptedPayload,
+                                  let payloadData = Data(base64Encoded: encryptedPayload) else {
+                                msg.messageText = "[Unable to decrypt]"
+                                decryptedMessages.append(msg)
+                                continue
+                            }
+
+                            let decrypted = try await encryptionService.decryptMessage(
+                                encryptedPayload: payloadData,
+                                from: message.fromUserId
+                            )
+
+                            msg.messageText = decrypted
+                            print("🔓 Decrypted message from user \(message.fromUserId)")
+                        } catch {
+                            print("❌ Failed to decrypt message: \(error.localizedDescription)")
+                            msg.messageText = "[Unable to decrypt message]"
+                        }
+                    }
+
+                    decryptedMessages.append(msg)
+                }
+
+                return decryptedMessages
             } else {
                 print("❌ Failed to fetch message history")
                 return []
@@ -137,6 +193,30 @@ private struct SendMessageRequest: Codable {
     enum CodingKeys: String, CodingKey {
         case toUserIds = "to_user_ids"
         case message
+        case deviceName = "device_name"
+    }
+}
+
+private struct EncryptedMessagePayload: Codable {
+    let toUserId: Int
+    let encryptedPayload: String
+    let senderRatchetKey: String?
+    let counter: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case toUserId = "to_user_id"
+        case encryptedPayload = "encrypted_payload"
+        case senderRatchetKey = "sender_ratchet_key"
+        case counter
+    }
+}
+
+private struct SendEncryptedMessageRequest: Codable {
+    let messages: [EncryptedMessagePayload]
+    let deviceName: String
+
+    enum CodingKeys: String, CodingKey {
+        case messages
         case deviceName = "device_name"
     }
 }

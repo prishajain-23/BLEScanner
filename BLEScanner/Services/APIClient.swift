@@ -58,9 +58,11 @@ class APIClient {
         requiresAuth: Bool = false
     ) async throws -> T {
         guard let url = URL(string: baseURL + endpoint) else {
+            print("❌ Invalid URL: \(baseURL + endpoint)")
             throw APIError.invalidURL
         }
 
+        print("🌐 API Request: \(method.rawValue) \(url)")
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -93,6 +95,11 @@ class APIClient {
 
             // Check for other errors
             if httpResponse.statusCode >= 400 {
+                // Log raw response for debugging
+                if let responseString = String(data: data, encoding: .utf8) {
+                    print("🔴 Server error response: \(responseString)")
+                }
+
                 // Try to decode error message
                 if let errorResponse = try? decoder.decode(GenericResponse.self, from: data),
                    let errorMessage = errorResponse.error {

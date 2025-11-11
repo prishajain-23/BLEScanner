@@ -60,7 +60,7 @@ class NotificationManager {
             }
 
             let content = UNMutableNotificationContent()
-            content.title = "ESP32 Connected"
+            content.title = "BLE Device Connected"
             content.body = "\(deviceName) is now connected"
             content.sound = .default
 

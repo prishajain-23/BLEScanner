@@ -29,6 +29,7 @@ struct APIEndpoints {
 
     // Messages
     static let sendMessage = "/messages/send"
+    static let sendEncryptedMessage = "/messages/send-encrypted"
     static let messageHistory = "/messages/history"
     static func markMessageRead(_ id: Int) -> String { "/messages/\(id)/read" }
 

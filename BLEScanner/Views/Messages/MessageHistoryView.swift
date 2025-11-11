@@ -44,6 +44,21 @@ struct MessageHistoryView: View {
             }
             .task {
                 await loadMessages()
+                setupNotificationObserver()
+            }
+        }
+    }
+
+    // MARK: - Notification Observer
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("NewMessageReceived"),
+            object: nil,
+            queue: .main
+        ) { _ in
+            Task {
+                await refreshMessages()
             }
         }
     }
@@ -139,7 +154,7 @@ struct MessageHistoryView: View {
             }
 
             // Message text
-            Text(message.messageText)
+            Text(message.messageText ?? "[Encrypted - Unable to decrypt]")
                 .font(.body)
                 .padding(.vertical, 4)
 

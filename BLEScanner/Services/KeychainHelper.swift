@@ -53,6 +53,44 @@ class KeychainHelper {
         return tokenDeleted && usernameDeleted
     }
 
+    // MARK: - Generic Data Storage (for Signal Protocol keys)
+
+    /// Save raw data to keychain
+    func save(data: Data, key: String) {
+        _ = delete(key: key) // Remove existing
+
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecValueData as String: data,
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
+            kSecAttrSynchronizable as String: false // Don't sync to iCloud
+        ]
+
+        SecItemAdd(query as CFDictionary, nil)
+    }
+
+    /// Load raw data from keychain
+    func load(key: String) -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        guard status == errSecSuccess, let data = result as? Data else {
+            return nil
+        }
+
+        return data
+    }
+
     // MARK: - Private Keychain Operations
 
     private func save(key: String, value: String) -> Bool {
