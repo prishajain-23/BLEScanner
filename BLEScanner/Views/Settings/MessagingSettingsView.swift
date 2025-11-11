@@ -16,6 +16,8 @@ struct MessagingSettingsView: View {
     @State private var showContacts = false
     @State private var showMessageHistory = false
     @State private var showLogoutConfirmation = false
+    @State private var isSendingTestMessage = false
+    @State private var testMessageResult: String?
 
     // Message template
     @AppStorage("messageTemplate") private var messageTemplate = "{device} connected"
@@ -42,6 +44,11 @@ struct MessagingSettingsView: View {
 
                 // Message history
                 messagesSection
+
+                // Test encryption
+                if AuthService.shared.isAuthenticated {
+                    testMessageSection
+                }
 
                 // Account actions
                 if AuthService.shared.isAuthenticated {
@@ -250,6 +257,100 @@ struct MessagingSettingsView: View {
             Text("Notifications")
         } footer: {
             Text("Push notifications let you receive messages from contacts even when the app is closed")
+        }
+    }
+
+    // MARK: - Test Message Section
+
+    private var testMessageSection: some View {
+        Section {
+            Button {
+                Task {
+                    await regenerateKeys()
+                }
+            } label: {
+                HStack {
+                    Label("Regenerate Encryption Keys", systemImage: "key.fill")
+                    Spacer()
+                    if isSendingTestMessage {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                }
+            }
+            .disabled(isSendingTestMessage)
+
+            Button {
+                Task {
+                    await sendTestMessage()
+                }
+            } label: {
+                HStack {
+                    Label("Send Test Message", systemImage: "paperplane.fill")
+                    Spacer()
+                    if isSendingTestMessage {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
+                }
+            }
+            .disabled(isSendingTestMessage || contactService.selectedContactIds.isEmpty)
+
+            if let result = testMessageResult {
+                Text(result)
+                    .font(.caption)
+                    .foregroundStyle(result.contains("✅") ? .green : .red)
+            }
+        } header: {
+            Text("Testing")
+        } footer: {
+            if contactService.selectedContactIds.isEmpty {
+                Text("Select at least one contact to send a test message")
+            } else {
+                Text("Send an encrypted test message to \(contactService.selectedContactIds.count) selected contact(s)")
+            }
+        }
+    }
+
+    private func regenerateKeys() async {
+        isSendingTestMessage = true
+        testMessageResult = nil
+
+        do {
+            // Force regenerate and upload keys
+            try await CryptoKeyManager.shared.setupKeys()
+            testMessageResult = "✅ Keys regenerated and uploaded!"
+        } catch {
+            testMessageResult = "❌ Failed to regenerate keys: \(error.localizedDescription)"
+        }
+
+        isSendingTestMessage = false
+
+        // Clear result after 5 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            testMessageResult = nil
+        }
+    }
+
+    private func sendTestMessage() async {
+        isSendingTestMessage = true
+        testMessageResult = nil
+
+        let selectedIds = contactService.selectedContactIds
+        let testMessage = "🔐 Test encrypted message from BLEScanner"
+
+        let success = await MessagingService.shared.sendMessage(
+            toUserIds: selectedIds,
+            message: testMessage,
+            deviceName: "Test Device"
+        )
+
+        isSendingTestMessage = false
+        testMessageResult = success ? "✅ Message sent successfully!" : "❌ Failed to send message"
+
+        // Clear result after 5 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            testMessageResult = nil
         }
     }
 

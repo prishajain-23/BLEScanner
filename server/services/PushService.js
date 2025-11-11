@@ -103,12 +103,26 @@ class PushService {
    * @param {Object} messageData - Message information
    */
   async sendMessageNotification(deviceTokens, messageData) {
-    const { from_username, message_text, device_name } = messageData;
+    const { from_username, message_text, device_name, encrypted } = messageData;
+
+    let notificationBody;
+
+    if (encrypted || !message_text) {
+      // Encrypted message - sender name only (privacy-preserving)
+      notificationBody = device_name
+        ? `${device_name}: New message`
+        : 'New message';
+    } else {
+      // Plaintext message (legacy) - show full content
+      notificationBody = device_name
+        ? `${device_name}: ${message_text}`
+        : message_text;
+    }
 
     const notification = {
       alert: {
         title: from_username,
-        body: device_name ? `${device_name}: ${message_text}` : message_text
+        body: notificationBody
       },
       badge: 1,
       sound: 'default',
@@ -116,7 +130,8 @@ class PushService {
         type: 'message',
         message_id: messageData.message_id,
         from_user_id: messageData.from_user_id,
-        device_name: device_name
+        device_name: device_name,
+        encrypted: encrypted || false
       }
     };
 

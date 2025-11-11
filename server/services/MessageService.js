@@ -2,7 +2,8 @@ const { pool } = require('../config/database');
 
 class MessageService {
   /**
-   * Send a message to multiple recipients
+   * Send a message to multiple recipients (LEGACY - plaintext)
+   * @deprecated Use sendEncryptedMessages instead
    * @param {number} fromUserId - Sender's user ID
    * @param {number[]} toUserIds - Array of recipient user IDs
    * @param {string} messageText - Message content
@@ -15,9 +16,9 @@ class MessageService {
     try {
       await client.query('BEGIN');
 
-      // Insert message
+      // Insert message (plaintext - legacy)
       const messageResult = await client.query(
-        'INSERT INTO messages (from_user_id, message_text, device_name, created_at) VALUES ($1, $2, $3, NOW()) RETURNING id, from_user_id, message_text, device_name, created_at',
+        'INSERT INTO messages (from_user_id, message_text, device_name, encryption_version, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING id, from_user_id, message_text, device_name, created_at',
         [fromUserId, messageText, deviceName]
       );
 
@@ -50,7 +51,70 @@ class MessageService {
   }
 
   /**
+   * Send encrypted messages (Signal Protocol E2EE)
+   * @param {number} fromUserId - Sender's user ID
+   * @param {Array<Object>} encryptedMessages - Array of {toUserId, encryptedPayload, senderRatchetKey, counter}
+   * @param {string} deviceName - Optional device name
+   * @returns {Promise<Object>} - Created message IDs
+   */
+  async sendEncryptedMessages(fromUserId, encryptedMessages, deviceName = null) {
+    const client = await pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      const messageIds = [];
+
+      // Insert one message per recipient (each has unique encrypted payload)
+      for (const encMsg of encryptedMessages) {
+        const messageResult = await client.query(
+          `INSERT INTO messages (
+            from_user_id,
+            encrypted_payload,
+            sender_ratchet_key,
+            counter,
+            device_name,
+            encryption_version,
+            created_at
+          ) VALUES ($1, $2, $3, $4, $5, 1, NOW())
+          RETURNING id`,
+          [
+            fromUserId,
+            encMsg.encryptedPayload,  // Buffer (BYTEA)
+            encMsg.senderRatchetKey || null,  // Buffer (BYTEA)
+            encMsg.counter || null,  // Integer
+            deviceName
+          ]
+        );
+
+        const messageId = messageResult.rows[0].id;
+        messageIds.push(messageId);
+
+        // Insert recipient record
+        await client.query(
+          'INSERT INTO message_recipients (message_id, to_user_id) VALUES ($1, $2)',
+          [messageId, encMsg.toUserId]
+        );
+      }
+
+      await client.query('COMMIT');
+
+      return {
+        success: true,
+        messageIds,
+        recipientCount: encryptedMessages.length
+      };
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  /**
    * Get message history for a user (sent and received)
+   * Supports both encrypted (v1) and plaintext (v0) messages
    * @param {number} userId - User ID
    * @param {number} limit - Max messages to return
    * @param {number} offset - Offset for pagination
@@ -64,6 +128,10 @@ class MessageService {
         m.from_user_id,
         u.username as from_username,
         m.message_text,
+        m.encrypted_payload,
+        m.sender_ratchet_key,
+        m.counter,
+        m.encryption_version,
         m.device_name,
         m.created_at,
         true as is_sent,
@@ -85,6 +153,10 @@ class MessageService {
         m.from_user_id,
         u.username as from_username,
         m.message_text,
+        m.encrypted_payload,
+        m.sender_ratchet_key,
+        m.counter,
+        m.encryption_version,
         m.device_name,
         m.created_at,
         false as is_sent,
@@ -100,8 +172,8 @@ class MessageService {
 
     // Combine and sort by timestamp
     const allMessages = [
-      ...sentMessages.rows,
-      ...receivedMessages.rows
+      ...sentMessages.rows.map(msg => this._formatMessage(msg)),
+      ...receivedMessages.rows.map(msg => this._formatMessage(msg))
     ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     // Apply pagination
@@ -113,6 +185,43 @@ class MessageService {
       limit,
       offset
     };
+  }
+
+  /**
+   * Format message based on encryption version
+   * @private
+   */
+  _formatMessage(msg) {
+    const formatted = {
+      id: msg.id,
+      from_user_id: msg.from_user_id,
+      from_username: msg.from_username,
+      device_name: msg.device_name,
+      created_at: msg.created_at,
+      is_sent: msg.is_sent,
+      encryption_version: msg.encryption_version || 0
+    };
+
+    // Add sent-specific fields
+    if (msg.is_sent) {
+      formatted.to_usernames = msg.to_usernames;
+    } else {
+      formatted.read = msg.read;
+      formatted.read_at = msg.read_at;
+    }
+
+    // Include appropriate message content based on encryption version
+    if (msg.encryption_version === 1) {
+      // Encrypted message - return encrypted payload as base64
+      formatted.encrypted_payload = msg.encrypted_payload ? msg.encrypted_payload.toString('base64') : null;
+      formatted.sender_ratchet_key = msg.sender_ratchet_key ? msg.sender_ratchet_key.toString('base64') : null;
+      formatted.counter = msg.counter;
+    } else {
+      // Plaintext message (legacy)
+      formatted.message_text = msg.message_text;
+    }
+
+    return formatted;
   }
 
   /**
