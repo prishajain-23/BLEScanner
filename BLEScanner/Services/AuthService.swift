@@ -56,6 +56,16 @@ class AuthService {
                 currentUser = user
                 isAuthenticated = true
 
+                // Setup encryption keys for new user
+                Task {
+                    do {
+                        try await CryptoKeyManager.shared.setupKeys()
+                        print("✅ Encryption keys set up for new user")
+                    } catch {
+                        print("⚠️ Failed to setup encryption keys: \(error.localizedDescription)")
+                    }
+                }
+
                 // Notify observers (for push notification registration)
                 NotificationCenter.default.post(name: NSNotification.Name("UserDidLogin"), object: nil)
             } else {
@@ -95,6 +105,16 @@ class AuthService {
                 // Update state
                 currentUser = user
                 isAuthenticated = true
+
+                // Setup encryption keys (always upload to ensure server has them)
+                Task {
+                    do {
+                        try await CryptoKeyManager.shared.setupKeys()
+                        print("✅ Encryption keys set up on login")
+                    } catch {
+                        print("⚠️ Failed to setup encryption keys: \(error.localizedDescription)")
+                    }
+                }
 
                 // Notify observers (for push notification registration)
                 NotificationCenter.default.post(name: NSNotification.Name("UserDidLogin"), object: nil)

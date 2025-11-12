@@ -18,8 +18,8 @@ struct AuthView: View {
             VStack(spacing: 20) {
                 // Logo/Title
                 VStack(spacing: 10) {
-                    Image(systemName: "medal.fill")
-                        .font(.system(size: 60))
+                    Image(systemName: "medal.star")
+                        .font(.system(size: 80))
                         .foregroundColor(.blue)
 
                     Text("MOF")

@@ -19,6 +19,10 @@ class NotificationManager {
     private let notificationCenter = UNUserNotificationCenter.current()
 
     init() {
+        // Default to true if not explicitly set
+        if UserDefaults.standard.object(forKey: UserDefaultsKeys.sendNotificationOnConnect) == nil {
+            UserDefaults.standard.set(true, forKey: UserDefaultsKeys.sendNotificationOnConnect)
+        }
         self.notificationsEnabled = UserDefaults.standard.bool(forKey: UserDefaultsKeys.sendNotificationOnConnect)
         requestPermissions()
     }
@@ -71,7 +75,7 @@ class NotificationManager {
             // Custom data accessible in Shortcuts
             content.userInfo = [
                 "deviceName": deviceName,
-                "eventType": "Medal of FreedomConnected",
+                "eventType": "Medal of Freedom Connected",
                 "timestamp": Date().timeIntervalSince1970
             ]
 

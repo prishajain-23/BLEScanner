@@ -354,18 +354,32 @@ extension BLEManager: CBCentralManagerDelegate {
         notificationManager.sendConnectionNotification(deviceName: deviceName)
 
         // Send message to contacts (if enabled)
+        print("🔍 Checking message sending conditions...")
+        print("  - messagingEnabled: \(messagingEnabled)")
+
         if messagingEnabled {
             Task { @MainActor in
+                print("  - isAuthenticated: \(AuthService.shared.isAuthenticated)")
+
                 if AuthService.shared.isAuthenticated {
                     let contactIds = ContactService.shared.selectedContactIds
+                    print("  - contactIds: \(contactIds)")
+
                     if !contactIds.isEmpty {
+                        print("✅ All conditions met - sending message!")
                         await MessagingService.shared.sendConnectionMessage(
                             deviceName: deviceName,
                             contactIds: contactIds
                         )
+                    } else {
+                        print("⚠️ No contacts selected - skipping message send")
                     }
+                } else {
+                    print("⚠️ User not authenticated - skipping message send")
                 }
             }
+        } else {
+            print("⚠️ Messaging disabled - skipping message send")
         }
 
         // Discover services

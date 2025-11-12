@@ -44,10 +44,14 @@ class MessagingService {
             if !keyManager.hasKeys() {
                 print("⚠️ No encryption keys found, setting up...")
                 try await keyManager.setupKeys()
+            } else {
+                print("🔐 Encryption keys found")
             }
 
             // Encrypt the message for each recipient
+            print("🔒 Starting encryption for \(toUserIds.count) recipient(s)...")
             let encryptedMessages = try await encryptionService.encryptMessage(message, for: toUserIds)
+            print("✅ Encryption complete")
 
             // Convert to API format
             let messagesPayload = encryptedMessages.map { encrypted in
@@ -64,6 +68,7 @@ class MessagingService {
                 deviceName: deviceName ?? "Unknown Device"
             )
 
+            print("🌐 Sending to backend: \(APIEndpoints.sendEncryptedMessage)")
             // Send encrypted messages to backend
             let response: MessageSendResponse = try await apiClient.post(
                 endpoint: APIEndpoints.sendEncryptedMessage,
@@ -73,6 +78,7 @@ class MessagingService {
 
             if response.success {
                 print("✅ Encrypted message sent successfully")
+                print("📊 Backend response: \(response)")
                 return true
             } else {
                 print("❌ Failed to send encrypted message: \(response.error ?? "Unknown error")")
@@ -80,6 +86,7 @@ class MessagingService {
             }
         } catch {
             print("❌ Error sending encrypted message: \(error.localizedDescription)")
+            print("❌ Error details: \(error)")
             return false
         }
     }
@@ -89,15 +96,21 @@ class MessagingService {
     ///   - deviceName: Name of the BLE device
     ///   - contactIds: Array of contact IDs to send to
     func sendConnectionMessage(deviceName: String, contactIds: [Int]) async {
+        print("📱 sendConnectionMessage called - deviceName: \(deviceName), contactIds: \(contactIds)")
+
         // Get message template from UserDefaults, or use default
         let template = UserDefaults.standard.string(forKey: "messageTemplate") ?? "{device} connected"
+        print("📝 Message template: \(template)")
 
         // Replace template variables
         let message = template
             .replacingOccurrences(of: "{device}", with: deviceName)
             .replacingOccurrences(of: "{time}", with: Date().formatted(date: .omitted, time: .shortened))
 
-        await sendMessage(toUserIds: contactIds, message: message, deviceName: deviceName)
+        print("📧 Final message: \(message)")
+
+        let success = await sendMessage(toUserIds: contactIds, message: message, deviceName: deviceName)
+        print("📊 Send result: \(success ? "SUCCESS" : "FAILED")")
     }
 
     // MARK: - Message History
