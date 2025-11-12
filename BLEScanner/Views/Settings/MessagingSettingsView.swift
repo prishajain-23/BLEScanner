@@ -20,7 +20,7 @@ struct MessagingSettingsView: View {
     @State private var testMessageResult: String?
 
     // Message template
-    @AppStorage("messageTemplate") private var messageTemplate = "{device} connected"
+    @AppStorage("messageTemplate") private var messageTemplate = "Medal of Freedom connected"
 
     var body: some View {
         NavigationStack {
@@ -30,9 +30,6 @@ struct MessagingSettingsView: View {
 
                 // Message template
                 messageTemplateSection
-
-                // Push notification status
-                pushNotificationSection
 
                 // User profile
                 if AuthService.shared.isAuthenticated {
@@ -95,7 +92,7 @@ struct MessagingSettingsView: View {
         } header: {
             Text("Auto-Messaging")
         } footer: {
-            Text("When enabled, messages will be sent to your selected contacts when ESP32 connects")
+            Text("When enabled, messages will be sent to your selected contacts when Medal of Freedom connects")
         }
     }
 
@@ -130,13 +127,13 @@ struct MessagingSettingsView: View {
         } header: {
             Text("Message Template")
         } footer: {
-            Text("Customize your message. Use {device} for device name, {time} for timestamp.\nExample: \"{device} is now online\" → \"Living Room ESP32 is now online\"")
+            Text("Customize your message. Use {device} for device name, {time} for timestamp.\nExample: \"{device} is now online\" → \"Living Room Medal of Freedom is now online\"")
         }
     }
 
     private var previewMessage: String {
         messageTemplate
-            .replacingOccurrences(of: "{device}", with: "ESP32 Device")
+            .replacingOccurrences(of: "{device}", with: "Medal of Freedom")
             .replacingOccurrences(of: "{time}", with: Date().formatted(date: .omitted, time: .shortened))
     }
 
@@ -214,49 +211,6 @@ struct MessagingSettingsView: View {
             .foregroundStyle(.primary)
         } header: {
             Text("History")
-        }
-    }
-
-    // MARK: - Push Notification Section
-
-    private var pushNotificationSection: some View {
-        Section {
-            HStack {
-                Label("Push Notifications", systemImage: "bell.fill")
-                Spacer()
-                if pushService.isRegistered {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                    Text("Enabled")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.red)
-                    Text("Disabled")
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            if let token = pushService.deviceToken {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Device Token")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(String(token.prefix(20)) + "...")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-            }
-
-            if !pushService.isRegistered {
-                Button("Enable Push Notifications") {
-                    pushService.registerForRemoteNotifications()
-                }
-            }
-        } header: {
-            Text("Notifications")
-        } footer: {
-            Text("Push notifications let you receive messages from contacts even when the app is closed")
         }
     }
 

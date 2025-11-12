@@ -8,57 +8,37 @@
 import SwiftUI
 
 struct ContactListView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var contactService = ContactService.shared
     @State private var showAddContact = false
     @State private var showDeleteConfirmation = false
     @State private var contactToDelete: Contact?
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if contactService.isLoading && contactService.contacts.isEmpty {
-                    ProgressView("Loading contacts...")
-                } else if contactService.contacts.isEmpty {
-                    emptyState
-                } else {
-                    contactList
+        Group {
+            if contactService.isLoading && contactService.contacts.isEmpty {
+                ProgressView("Loading contacts...")
+            } else if contactService.contacts.isEmpty {
+                emptyState
+            } else {
+                contactList
+            }
+        }
+        .sheet(isPresented: $showAddContact) {
+            AddContactView()
+        }
+        .alert("Remove Contact", isPresented: $showDeleteConfirmation, presenting: contactToDelete) { contact in
+            Button("Cancel", role: .cancel) { }
+            Button("Remove", role: .destructive) {
+                Task {
+                    await contactService.removeContact(contactId: contact.id)
                 }
             }
-            .navigationTitle("Contacts")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showAddContact = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-            }
-            .sheet(isPresented: $showAddContact) {
-                AddContactView()
-            }
-            .alert("Remove Contact", isPresented: $showDeleteConfirmation, presenting: contactToDelete) { contact in
-                Button("Cancel", role: .cancel) { }
-                Button("Remove", role: .destructive) {
-                    Task {
-                        await contactService.removeContact(contactId: contact.id)
-                    }
-                }
-            } message: { contact in
-                Text("Remove \(contact.username) from your contacts?")
-            }
-            .task {
-                await contactService.fetchContacts()
-                contactService.loadSelectedContacts()
-            }
+        } message: { contact in
+            Text("Remove \(contact.username) from your contacts?")
+        }
+        .task {
+            await contactService.fetchContacts()
+            contactService.loadSelectedContacts()
         }
     }
 
@@ -73,7 +53,7 @@ struct ContactListView: View {
             } header: {
                 Text("Your Contacts")
             } footer: {
-                Text("Select contacts who will receive messages when your ESP32 connects. Tap to toggle selection.")
+                Text("Select contacts who will receive messages when your Medal of Freedom connects. Tap to toggle selection.")
             }
         }
         .refreshable {
@@ -123,7 +103,7 @@ struct ContactListView: View {
         ContentUnavailableView {
             Label("No Contacts", systemImage: "person.2.slash")
         } description: {
-            Text("Add contacts to send them messages when your ESP32 connects")
+            Text("Add contacts to send them messages when your Medal of Freedom connects")
         } actions: {
             Button {
                 showAddContact = true

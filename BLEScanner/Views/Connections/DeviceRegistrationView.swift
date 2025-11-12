@@ -1,35 +1,21 @@
 //
-//  ContentView.swift
+//  DeviceRegistrationView.swift
 //  BLEScanner
 //
-//  Created by Christian Möller on 02.01.23.
+//  Device registration - scan, select, and register Medal of Freedoms
 //
 
 import SwiftUI
 import CoreBluetooth
 
-struct ContentView: View {
-    @State private var notificationManager = NotificationManager()
-    @State private var shortcutManager = ShortcutManager()
-    @State private var bleManager: BLEManager
+struct DeviceRegistrationView: View {
+    @State var bleManager: BLEManager
     @State private var searchText = ""
     @State private var filteredResults: [DiscoveredPeripheral] = []
-    @State private var showSettings = false
-    @State private var showAutomationGuide = false
+    @Environment(\.dismiss) var dismiss
     @Environment(\.scenePhase) var scenePhase
 
     private let searchDebouncer = Debouncer(delay: .milliseconds(150))
-
-    init() {
-        let notifManager = NotificationManager()
-        let shortManager = ShortcutManager()
-        _notificationManager = State(initialValue: notifManager)
-        _shortcutManager = State(initialValue: shortManager)
-        _bleManager = State(initialValue: BLEManager(
-            notificationManager: notifManager,
-            shortcutManager: shortManager
-        ))
-    }
 
     var body: some View {
         NavigationStack {
@@ -51,34 +37,14 @@ struct ContentView: View {
                 // Bottom controls
                 bottomControls
             }
-            .navigationTitle("BLE Scanner")
+            .navigationTitle("Register Device")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showAutomationGuide = true
-                    } label: {
-                        Image(systemName: "info.circle")
+                    Button("Cancel") {
+                        dismiss()
                     }
                 }
-
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showSettings = true
-                    } label: {
-                        Image(systemName: "gear")
-                    }
-                }
-            }
-            .sheet(isPresented: $showSettings) {
-                SettingsView(
-                    bleManager: bleManager,
-                    notificationManager: notificationManager,
-                    shortcutManager: shortcutManager
-                )
-            }
-            .sheet(isPresented: $showAutomationGuide) {
-                AutomationGuideView()
             }
             .onChange(of: scenePhase) { oldPhase, newPhase in
                 switch newPhase {
@@ -90,6 +56,12 @@ struct ContentView: View {
                     break
                 @unknown default:
                     break
+                }
+            }
+            .onAppear {
+                // Auto-start scanning when sheet appears
+                if !bleManager.isScanning {
+                    bleManager.startScan()
                 }
             }
         }
@@ -190,7 +162,7 @@ struct ContentView: View {
     private var deviceList: some View {
         List(searchText.isEmpty ? bleManager.discoveredPeripherals : filteredResults,
              id: \.peripheral.identifier) { discoveredPeripheral in
-            DeviceRow(
+            DeviceRegistrationRow(
                 peripheral: discoveredPeripheral.peripheral,
                 advertisedData: discoveredPeripheral.advertisedData,
                 isConnected: bleManager.connectedPeripheral?.identifier == discoveredPeripheral.peripheral.identifier,
@@ -204,6 +176,8 @@ struct ContentView: View {
                 onSetAutoConnect: {
                     bleManager.setAutoConnectDevice(discoveredPeripheral.peripheral)
                     bleManager.autoConnectEnabled = true
+                    // Auto-dismiss sheet after registration
+                    dismiss()
                 }
             )
         }
@@ -269,8 +243,8 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Device Row
-struct DeviceRow: View {
+// MARK: - Device Registration Row
+struct DeviceRegistrationRow: View {
     let peripheral: CBPeripheral
     let advertisedData: String
     let isConnected: Bool
@@ -327,7 +301,7 @@ struct DeviceRow: View {
                     .controlSize(.small)
 
                     Button(action: onSetAutoConnect) {
-                        Label("Auto", systemImage: "bolt.fill")
+                        Label("Register", systemImage: "bolt.fill")
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)
@@ -349,129 +323,9 @@ struct DeviceRow: View {
     }
 }
 
-// MARK: - Settings View
-struct SettingsView: View {
-    @Environment(\.dismiss) var dismiss
-    var bleManager: BLEManager
-    var notificationManager: NotificationManager
-    var shortcutManager: ShortcutManager
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    Toggle("Enable Auto-Connect", isOn: Binding(
-                        get: { bleManager.autoConnectEnabled },
-                        set: { bleManager.autoConnectEnabled = $0 }
-                    ))
-
-                    if bleManager.autoConnectEnabled {
-                        Toggle("Background Reconnection", isOn: Binding(
-                            get: { bleManager.allowBackgroundReconnection },
-                            set: { bleManager.allowBackgroundReconnection = $0 }
-                        ))
-
-                        Button("Clear Auto-Connect Device") {
-                            bleManager.clearAutoConnectDevice()
-                        }
-                        .foregroundStyle(.red)
-                    }
-                } header: {
-                    Text("Auto-Connection")
-                } footer: {
-                    if bleManager.autoConnectEnabled {
-                        Text("Auto-connect will attempt up to \(BLEConfiguration.maxReconnectionAttempts) reconnections. Background reconnection allows retries even when the app is in the background (uses more battery).")
-                    } else {
-                        Text("When enabled, the app will automatically connect to your saved ESP32 device when it's discovered.")
-                    }
-                }
-
-                Section {
-                    Toggle("Send Notifications", isOn: Binding(
-                        get: { notificationManager.notificationsEnabled },
-                        set: { notificationManager.notificationsEnabled = $0 }
-                    ))
-                } header: {
-                    Text("Notifications")
-                } footer: {
-                    Text("Receive notifications when your ESP32 connects. Use this with Shortcuts automation to trigger actions even when the app is in the background.")
-                }
-
-                Section {
-                    TextField("Shortcut Name", text: Binding(
-                        get: { shortcutManager.shortcutName },
-                        set: { shortcutManager.shortcutName = $0 }
-                    ))
-                    .autocapitalization(.none)
-                } header: {
-                    Text("iOS Shortcuts (Foreground Only)")
-                } footer: {
-                    Text("This shortcut runs only when the app is in the foreground. For background automation, enable notifications above and create a Shortcuts automation triggered by the 'ESP32 Connected' notification.")
-                }
-
-                // Messaging Section
-                Section {
-                    if AuthService.shared.isAuthenticated {
-                        NavigationLink {
-                            MessagingSettingsView(bleManager: bleManager)
-                        } label: {
-                            Label("Messaging", systemImage: "envelope.fill")
-                        }
-
-                        HStack {
-                            Text("Auto-Send")
-                            Spacer()
-                            Text(bleManager.messagingEnabled ? "Enabled" : "Disabled")
-                                .foregroundStyle(.secondary)
-                        }
-                    } else {
-                        Text("Login to enable messaging")
-                            .foregroundStyle(.secondary)
-                    }
-                } header: {
-                    Text("Auto-Messaging")
-                } footer: {
-                    Text("Automatically send messages to contacts when your ESP32 device connects")
-                }
-
-                Section {
-                    HStack {
-                        Text("Connection State")
-                        Spacer()
-                        Text(connectionStateText)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let peripheral = bleManager.connectedPeripheral {
-                        HStack {
-                            Text("Connected Device")
-                            Spacer()
-                            Text(peripheral.name ?? "Unknown")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                } header: {
-                    Text("Status")
-                }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-
-    private var connectionStateText: String {
-        switch bleManager.connectionState {
-        case .disconnected: return "Disconnected"
-        case .connecting: return "Connecting..."
-        case .connected: return "Connected"
-        case .disconnecting: return "Disconnecting..."
-        }
-    }
+#Preview {
+    DeviceRegistrationView(bleManager: BLEManager(
+        notificationManager: NotificationManager(),
+        shortcutManager: ShortcutManager()
+    ))
 }

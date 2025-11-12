@@ -97,10 +97,10 @@ class BLEManager: NSObject {
 
         // Update connection state in UserDefaults based on actual state
         if connectionState == .connected, let deviceName = connectedPeripheral?.name {
-            UserDefaults.standard.set(true, forKey: "ESP32IsConnected")
-            UserDefaults.standard.set(deviceName, forKey: "ESP32DeviceName")
+            UserDefaults.standard.set(true, forKey: "Medal of FreedomIsConnected")
+            UserDefaults.standard.set(deviceName, forKey: "Medal of FreedomDeviceName")
         } else {
-            UserDefaults.standard.set(false, forKey: "ESP32IsConnected")
+            UserDefaults.standard.set(false, forKey: "Medal of FreedomIsConnected")
         }
 
         // Reset reconnection attempts when app returns to foreground
@@ -346,9 +346,9 @@ extension BLEManager: CBCentralManagerDelegate {
         resetReconnectionState()
 
         // Store connection state for App Intent
-        UserDefaults.standard.set(true, forKey: "ESP32IsConnected")
-        UserDefaults.standard.set(deviceName, forKey: "ESP32DeviceName")
-        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "ESP32LastConnectionTime")
+        UserDefaults.standard.set(true, forKey: "Medal of FreedomIsConnected")
+        UserDefaults.standard.set(deviceName, forKey: "Medal of FreedomDeviceName")
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "Medal of FreedomLastConnectionTime")
 
         // Send notification
         notificationManager.sendConnectionNotification(deviceName: deviceName)
@@ -395,7 +395,7 @@ extension BLEManager: CBCentralManagerDelegate {
         connectedPeripheral = nil
 
         // Update connection state for App Intent
-        UserDefaults.standard.set(false, forKey: "ESP32IsConnected")
+        UserDefaults.standard.set(false, forKey: "Medal of FreedomIsConnected")
 
         if let error = error {
             // Unexpected disconnection
@@ -465,6 +465,6 @@ extension BLEManager: CBPeripheralDelegate {
         }
 
         // Handle characteristic value updates here
-        // This is where you'd process data from your ESP32
+        // This is where you'd process data from your Medal of Freedom
     }
 }

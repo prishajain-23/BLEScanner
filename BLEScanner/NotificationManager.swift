@@ -60,24 +60,24 @@ class NotificationManager {
             }
 
             let content = UNMutableNotificationContent()
-            content.title = "BLE Device Connected"
+            content.title = "MOF Connected"
             content.body = "\(deviceName) is now connected"
             content.sound = .default
 
             // Category identifier for Shortcuts automation
-            content.categoryIdentifier = "ESP32_CONNECTED"
+            content.categoryIdentifier = "Medal of Freedom_CONNECTED"
             content.threadIdentifier = "ble-connection"
 
             // Custom data accessible in Shortcuts
             content.userInfo = [
                 "deviceName": deviceName,
-                "eventType": "esp32Connected",
+                "eventType": "Medal of FreedomConnected",
                 "timestamp": Date().timeIntervalSince1970
             ]
 
             // Deliver immediately
             let request = UNNotificationRequest(
-                identifier: "esp32-connection-\(UUID().uuidString)",
+                identifier: "Medal of Freedom-connection-\(UUID().uuidString)",
                 content: content,
                 trigger: nil
             )
@@ -96,21 +96,21 @@ class NotificationManager {
         guard notificationsEnabled else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "ESP32 Disconnected"
+        content.title = "Medal of Freedom Disconnected"
         content.body = "\(deviceName) has disconnected"
         content.sound = .default
 
-        content.categoryIdentifier = "ESP32_DISCONNECTED"
+        content.categoryIdentifier = "Medal of Freedom_DISCONNECTED"
         content.threadIdentifier = "ble-connection"
 
         content.userInfo = [
             "deviceName": deviceName,
-            "eventType": "esp32Disconnected",
+            "eventType": "Medal of FreedomDisconnected",
             "timestamp": Date().timeIntervalSince1970
         ]
 
         let request = UNNotificationRequest(
-            identifier: "esp32-disconnection-\(UUID().uuidString)",
+            identifier: "Medal of Freedom-disconnection-\(UUID().uuidString)",
             content: content,
             trigger: nil
         )
