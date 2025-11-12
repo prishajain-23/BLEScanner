@@ -18,11 +18,11 @@ struct AuthView: View {
             VStack(spacing: 20) {
                 // Logo/Title
                 VStack(spacing: 10) {
-                    Image(systemName: "antenna.radiowaves.left.and.right")
+                    Image(systemName: "medal.fill")
                         .font(.system(size: 60))
                         .foregroundColor(.blue)
 
-                    Text("BLEScanner")
+                    Text("MOF")
                         .font(.largeTitle)
                         .fontWeight(.bold)
 
@@ -77,7 +77,7 @@ struct AuthView: View {
 
                 Spacer()
 
-                Text("Messages will be sent when your BLE device connects")
+                Text("Messages will be sent when your Medal of Freedom connects")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)

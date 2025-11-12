@@ -11,6 +11,7 @@ struct SettingsTabView: View {
     @State var bleManager: BLEManager
     @State private var pushService = PushNotificationService.shared
     @State private var showLogoutConfirmation = false
+    @State private var showHelp = false
 
     var body: some View {
         NavigationStack {
@@ -37,6 +38,15 @@ struct SettingsTabView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+            }
             .alert("Logout", isPresented: $showLogoutConfirmation) {
                 Button("Cancel", role: .cancel) { }
                 Button("Logout", role: .destructive) {
@@ -47,6 +57,9 @@ struct SettingsTabView: View {
             } message: {
                 Text("Are you sure you want to logout?")
             }
+            .sheet(isPresented: $showHelp) {
+                SettingsHelpView()
+            }
         }
     }
 
@@ -55,21 +68,30 @@ struct SettingsTabView: View {
     private var messagingSection: some View {
         Section {
             if AuthService.shared.isAuthenticated {
-                Toggle("Auto-Send Messages", isOn: Binding(
-                    get: { bleManager.messagingEnabled },
-                    set: { bleManager.messagingEnabled = $0 }
-                ))
-
                 NavigationLink {
                     MessagingSettingsView(bleManager: bleManager)
                 } label: {
                     HStack {
                         Label("Messaging Settings", systemImage: "envelope.fill")
                         Spacer()
-                        if ContactService.shared.selectedContactIds.count > 0 {
-                            Text("\(ContactService.shared.selectedContactIds.count) contacts")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+
+                        // Show enabled status and contact count
+                        VStack(alignment: .trailing, spacing: 2) {
+                            if bleManager.messagingEnabled {
+                                Text("Enabled")
+                                    .font(.caption)
+                                    .foregroundStyle(.green)
+                            } else {
+                                Text("Disabled")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if ContactService.shared.selectedContactIds.count > 0 {
+                                Text("\(ContactService.shared.selectedContactIds.count) contacts")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }
@@ -81,9 +103,9 @@ struct SettingsTabView: View {
             Text("Messaging")
         } footer: {
             if AuthService.shared.isAuthenticated {
-                Text("Send messages to contacts when your device connects")
+                Text("Configure auto-messaging and contacts")
             } else {
-                Text("Sign in to send automatic messages when your ESP32 connects")
+                Text("Sign in to send automatic messages when your Medal of Freedom connects")
             }
         }
     }
@@ -95,16 +117,18 @@ struct SettingsTabView: View {
             HStack {
                 Label("Push Notifications", systemImage: "bell.fill")
                 Spacer()
-                if pushService.isRegistered {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                    Text("Enabled")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.red)
-                    Text("Disabled")
-                        .foregroundStyle(.secondary)
+
+                // Show status in same style as messaging settings
+                VStack(alignment: .trailing, spacing: 2) {
+                    if pushService.isRegistered {
+                        Text("Enabled")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                    } else {
+                        Text("Disabled")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
 
@@ -146,7 +170,7 @@ struct SettingsTabView: View {
             if bleManager.autoConnectEnabled {
                 Text("Auto-connect will attempt up to \(BLEConfiguration.maxReconnectionAttempts) reconnections. Background reconnection uses more battery.")
             } else {
-                Text("Automatically connect to your registered ESP32 device when discovered")
+                Text("Automatically connect to your registered Medal of Freedom when discovered")
             }
         }
     }

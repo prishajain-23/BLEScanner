@@ -21,7 +21,7 @@ struct AutomationGuideView: View {
                             .fontWeight(.bold)
                             .foregroundStyle(.secondary)
 
-                        Text("Run shortcuts automatically when your ESP32 connects, even in the background!")
+                        Text("Run shortcuts automatically when your Medal of Freedom connects, even in the background!")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -33,7 +33,7 @@ struct AutomationGuideView: View {
                         iconColor: .yellow,
                         title: "How It Works"
                     ) {
-                        Text("The app sends a notification when your ESP32 connects. iOS Shortcuts can detect this notification and automatically run any actions you configure.")
+                        Text("The app sends a notification when your Medal of Freedom connects. iOS Shortcuts can detect this notification and automatically run any actions you configure.")
                     }
 
                     // Step 1
@@ -84,7 +84,7 @@ struct AutomationGuideView: View {
                                 Text("1. Automation → + → App")
                                 Text("2. Select 'BLE Scanner'")
                                 Text("3. Choose 'Is Opened'")
-                                Text("4. Add: Check ESP32 Connection")
+                                Text("4. Add: Check Medal of Freedom Connection")
                                 Text("5. If true → Run your shortcut")
                                 Text("6. Turn OFF 'Ask Before Running'")
                             }
@@ -103,7 +103,7 @@ struct AutomationGuideView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("1. Automation → + → Bluetooth")
                                 Text("2. Select 'Is Connected' or 'Is Turned On'")
-                                Text("3. Add: Check ESP32 Connection")
+                                Text("3. Add: Check Medal of Freedom Connection")
                                 Text("4. If true → Run your shortcut")
                                 Text("5. Turn OFF 'Ask Before Running'")
                             }
@@ -122,7 +122,7 @@ struct AutomationGuideView: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("1. Automation → + → Arrive")
                                 Text("2. Set your location (home/work)")
-                                Text("3. Add: Check ESP32 Connection")
+                                Text("3. Add: Check Medal of Freedom Connection")
                                 Text("4. If true → Run your shortcut")
                             }
                             .font(.subheadline)
@@ -142,7 +142,7 @@ struct AutomationGuideView: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("If you don't want time-based polling:")
                             Text("• Enable notifications in settings")
-                            Text("• When you get 'ESP32 Connected' notification")
+                            Text("• When you get 'Medal of Freedom Connected' notification")
                             Text("• Tap it to open the app")
                             Text("• Shortcut runs automatically in foreground")
                                 .padding(.top, 4)
@@ -175,7 +175,7 @@ struct AutomationGuideView: View {
                     ) {
                         VStack(alignment: .leading, spacing: 8) {
                             ExampleRow(icon: "lightbulb.fill", text: "Turn on smart lights when you arrive home")
-                            ExampleRow(icon: "lock.open.fill", text: "Unlock door when ESP32 connects")
+                            ExampleRow(icon: "lock.open.fill", text: "Unlock door when Medal of Freedom connects")
                             ExampleRow(icon: "message.fill", text: "Send message to family")
                             ExampleRow(icon: "music.note", text: "Start playing music")
                             ExampleRow(icon: "thermometer", text: "Adjust thermostat")
@@ -200,14 +200,14 @@ struct AutomationGuideView: View {
                             )
 
                             TroubleshootRow(
-                                problem: "ESP32 doesn't connect",
+                                problem: "Medal of Freedom doesn't connect",
                                 solution: "Enable Auto-Connect and don't force-quit the app"
                             )
                         }
                     }
 
                     // Footer
-                    Text("Tip: Test by backgrounding the app, turning ESP32 off, then on again.")
+                    Text("Tip: Test by backgrounding the app, turning Medal of Freedom off, then on again.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .padding(.top, 8)

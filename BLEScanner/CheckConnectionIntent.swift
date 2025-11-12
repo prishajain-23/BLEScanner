@@ -2,7 +2,7 @@
 //  CheckConnectionIntent.swift
 //  BLEScanner
 //
-//  App Intent for checking ESP32 connection status from Shortcuts
+//  App Intent for checking Medal of Freedom connection status from Shortcuts
 //
 
 import AppIntents
@@ -37,8 +37,8 @@ struct ConnectionStatusQuery: EntityQuery {
 // MARK: - Check Connection Intent
 @available(iOS 16.0, *)
 struct CheckConnectionIntent: AppIntent {
-    static var title: LocalizedStringResource = "Check ESP32 Connection"
-    static var description = IntentDescription("Check if your ESP32 device is currently connected")
+    static var title: LocalizedStringResource = "Check Medal of Freedom Connection"
+    static var description = IntentDescription("Check if your Medal of Freedom is currently connected")
 
     // Run in background without opening app
     static var openAppWhenRun: Bool = false
@@ -47,8 +47,8 @@ struct CheckConnectionIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<Bool> & ProvidesDialog {
         // Read connection state from UserDefaults
-        let isConnected = UserDefaults.standard.bool(forKey: "ESP32IsConnected")
-        let deviceName = UserDefaults.standard.string(forKey: "ESP32DeviceName") ?? "ESP32"
+        let isConnected = UserDefaults.standard.bool(forKey: "Medal of FreedomIsConnected")
+        let deviceName = UserDefaults.standard.string(forKey: "Medal of FreedomDeviceName") ?? "Medal of Freedom"
 
         let dialog: String
         if isConnected {
@@ -68,14 +68,14 @@ struct CheckConnectionIntent: AppIntent {
 @available(iOS 16.0, *)
 struct GetDeviceNameIntent: AppIntent {
     static var title: LocalizedStringResource = "Get Connected Device Name"
-    static var description = IntentDescription("Get the name of the currently connected ESP32 device")
+    static var description = IntentDescription("Get the name of the currently connected Medal of Freedom")
 
     static var openAppWhenRun: Bool = false
 
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
-        let isConnected = UserDefaults.standard.bool(forKey: "ESP32IsConnected")
-        let deviceName = UserDefaults.standard.string(forKey: "ESP32DeviceName") ?? "No device"
+        let isConnected = UserDefaults.standard.bool(forKey: "Medal of FreedomIsConnected")
+        let deviceName = UserDefaults.standard.string(forKey: "Medal of FreedomDeviceName") ?? "No device"
 
         if isConnected {
             return .result(
@@ -95,13 +95,13 @@ struct GetDeviceNameIntent: AppIntent {
 @available(iOS 16.0, *)
 struct GetLastConnectionTimeIntent: AppIntent {
     static var title: LocalizedStringResource = "Get Last Connection Time"
-    static var description = IntentDescription("Get when ESP32 was last connected")
+    static var description = IntentDescription("Get when Medal of Freedom was last connected")
 
     static var openAppWhenRun: Bool = false
 
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
-        let timestamp = UserDefaults.standard.double(forKey: "ESP32LastConnectionTime")
+        let timestamp = UserDefaults.standard.double(forKey: "Medal of FreedomLastConnectionTime")
 
         if timestamp > 0 {
             let date = Date(timeIntervalSince1970: timestamp)
@@ -131,7 +131,7 @@ struct BLEScannerShortcuts: AppShortcutsProvider {
             intent: CheckConnectionIntent(),
             phrases: [
                 "Check \(.applicationName) connection",
-                "Is my ESP32 connected in \(.applicationName)",
+                "Is my Medal of Freedom connected in \(.applicationName)",
                 "Check BLE connection in \(.applicationName)"
             ],
             shortTitle: "Check Connection",
@@ -142,7 +142,7 @@ struct BLEScannerShortcuts: AppShortcutsProvider {
             intent: GetDeviceNameIntent(),
             phrases: [
                 "Get device name in \(.applicationName)",
-                "Which ESP32 is connected in \(.applicationName)"
+                "Which Medal of Freedom is connected in \(.applicationName)"
             ],
             shortTitle: "Device Name",
             systemImageName: "tag.fill"
@@ -151,7 +151,7 @@ struct BLEScannerShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: GetLastConnectionTimeIntent(),
             phrases: [
-                "When did ESP32 connect in \(.applicationName)",
+                "When did Medal of Freedom connect in \(.applicationName)",
                 "Last connection time in \(.applicationName)"
             ],
             shortTitle: "Last Connection",

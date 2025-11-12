@@ -30,7 +30,7 @@ struct APIConfig {
 
 ## Quick Reference
 
-**Goal:** Auto-send messages when ESP32 connects via BLE
+**Goal:** Auto-send messages when Medal of Freedom connects via BLE
 
 **Key Features:**
 - Username/password auth
@@ -39,7 +39,7 @@ struct APIConfig {
 - Push notifications
 - Message history (last 50)
 
-**Flow:** ESP32 connects → BLEManager → POST /api/messages/send → Backend stores → APNs push → Recipient notified
+**Flow:** Medal of Freedom connects → BLEManager → POST /api/messages/send → Backend stores → APNs push → Recipient notified
 
 **Stack:**
 - Backend: Node.js + Express + PostgreSQL + JWT + bcrypt + node-apn
@@ -109,7 +109,7 @@ Backend deployed and running at 142.93.184.210
 1. Register/login → Enable notifications → Add contacts (username search) → Enable auto-messaging in Settings
 
 **Daily Use:**
-ESP32 in range → Auto-connect → Message sent to contacts → Push notification → View history
+Medal of Freedom in range → Auto-connect → Message sent to contacts → Push notification → View history
 
 ---
 

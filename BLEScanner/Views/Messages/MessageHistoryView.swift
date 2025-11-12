@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MessageHistoryView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var messages: [Message] = []
     @State private var isLoading = false
     @State private var isLoadingMore = false
@@ -21,31 +20,20 @@ struct MessageHistoryView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if isLoading && messages.isEmpty {
-                    ProgressView("Loading messages...")
-                } else if let error = errorMessage {
-                    errorView(error)
-                } else if messages.isEmpty {
-                    emptyState
-                } else {
-                    messageList
-                }
+        Group {
+            if isLoading && messages.isEmpty {
+                ProgressView("Loading messages...")
+            } else if let error = errorMessage {
+                errorView(error)
+            } else if messages.isEmpty {
+                emptyState
+            } else {
+                messageList
             }
-            .navigationTitle("Message History")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-            .task {
-                await loadMessages()
-                setupNotificationObserver()
-            }
+        }
+        .task {
+            await loadMessages()
+            setupNotificationObserver()
         }
     }
 

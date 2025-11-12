@@ -11,6 +11,7 @@ struct MessagesTabView: View {
     @State private var selectedSegment = 0
     @State private var contactService = ContactService.shared
     @State private var showAddContact = false
+    @State private var showHelp = false
 
     var body: some View {
         NavigationStack {
@@ -33,6 +34,14 @@ struct MessagesTabView: View {
             .navigationTitle("Messages")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showHelp = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                }
+
                 if selectedSegment == 1 {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
@@ -45,6 +54,9 @@ struct MessagesTabView: View {
             }
             .sheet(isPresented: $showAddContact) {
                 AddContactView()
+            }
+            .sheet(isPresented: $showHelp) {
+                MessagesHelpView()
             }
         }
     }

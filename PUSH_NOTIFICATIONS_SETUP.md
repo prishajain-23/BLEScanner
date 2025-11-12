@@ -75,7 +75,7 @@ The new files were created but need to be added to the Xcode project manually:
    - Select User A for messaging (checkmark)
 
 3. **Trigger Message:**
-   - Connect ESP32 to Device B
+   - Connect Medal of Freedom to Device B
    - Message should auto-send to User A
    - User A should receive push notification
 

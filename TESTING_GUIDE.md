@@ -66,7 +66,7 @@
 ### 🔍 Performance Testing
 
 #### Test 1: Device Search Performance
-1. Start BLE scanning (should find ESP32 or other devices)
+1. Start BLE scanning (should find Medal of Freedom or other devices)
 2. Type rapidly in the search field: "ESP", delete, "Living", delete
 3. **✅ Pass**: No lag, instant response
 4. **❌ Fail**: Keyboard freezes, stutters, or delays
@@ -104,7 +104,7 @@
 - [ ] Clear search (X button) works
 
 #### Test 6: Connection Flow
-- [ ] Connect to ESP32 device
+- [ ] Connect to Medal of Freedom
 - [ ] Status bar shows "Connected"
 - [ ] Device name appears in status bar
 - [ ] Disconnect button works
@@ -260,7 +260,7 @@
 - iOS 17.6+ (deployment target)
 - iPhone with Bluetooth
 - Internet connection (for messaging API)
-- ESP32 or compatible BLE device (for BLE testing)
+- Medal of Freedom or compatible BLE device (for BLE testing)
 
 ### Recommended Setup
 - iPhone 12 or newer

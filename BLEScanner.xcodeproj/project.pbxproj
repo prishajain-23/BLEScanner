@@ -5,6 +5,7 @@
 	};
 	objectVersion = 56;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		96F75A072962D9EF00D36D9F /* BLEScannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F75A062962D9EF00D36D9F /* BLEScannerApp.swift */; };
 		96F75A0B2962D9F100D36D9F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96F75A0A2962D9F100D36D9F /* Assets.xcassets */; };
@@ -36,6 +37,11 @@
 		9F68B0FD2EBAFF9200F69A12 /* APIConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F52EBAFF9200F69A12 /* APIConstants.swift */; };
 		9F68B0FE2EBAFF9200F69A12 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F32EBAFF9200F69A12 /* KeychainHelper.swift */; };
 		9F68B0FF2EBAFF9200F69A12 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B0F22EBAFF9200F69A12 /* AuthService.swift */; };
+		9F7497142EC3FFC700F7ADCD /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7497122EC3FFC700F7ADCD /* DeviceRegistrationView.swift */; };
+		9F7497152EC3FFC700F7ADCD /* MedallionConnectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7497132EC3FFC700F7ADCD /* MedallionConnectionView.swift */; };
+		9F74971B2EC403AE00F7ADCD /* SettingsHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7497192EC403AE00F7ADCD /* SettingsHelpView.swift */; };
+		9F74971C2EC403AE00F7ADCD /* MessagesHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7497182EC403AE00F7ADCD /* MessagesHelpView.swift */; };
+		9F74971D2EC403AE00F7ADCD /* ConnectionsHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7497172EC403AE00F7ADCD /* ConnectionsHelpView.swift */; };
 		9F7FD2162EB997FE000D24EF /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2122EB997FE000D24EF /* BLEManager.swift */; };
 		9F7FD2172EB997FE000D24EF /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2142EB997FE000D24EF /* NotificationManager.swift */; };
 		9F7FD2182EB997FE000D24EF /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F7FD2152EB997FE000D24EF /* ShortcutManager.swift */; };
@@ -45,6 +51,7 @@
 		9FB2525D2EBAD9ED009DA72F /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = 9FB2525A2EBAD9ED009DA72F /* LICENSE.md */; };
 		9FB2525E2EBAD9ED009DA72F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 9FB2525B2EBAD9ED009DA72F /* README.md */; };
 /* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		96EC7A282966FED200D07500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		96F75A032962D9EF00D36D9F /* BLEScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BLEScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,10 +67,6 @@
 		9F25ECEB2EBDBAF60070318E /* PushNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationService.swift; sourceTree = "<group>"; };
 		9F25ECED2EBDBB190070318E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F4F8E4E2EBC6B1500DC4612 /* MessagingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingService.swift; sourceTree = "<group>"; };
-		9F4F8E502EBC73BD00DC4612 /* AddContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContactView.swift; sourceTree = "<group>"; };
-		9F4F8E512EBC73BD00DC4612 /* ContactListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListView.swift; sourceTree = "<group>"; };
-		9F4F8E532EBC73BD00DC4612 /* MessageHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHistoryView.swift; sourceTree = "<group>"; };
-		9F4F8E552EBC73BD00DC4612 /* MessagingSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSettingsView.swift; sourceTree = "<group>"; };
 		9F4F8E5B2EBC73ED00DC4612 /* ContactService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactService.swift; sourceTree = "<group>"; };
 		9F5724A22EBCF54D00E94327 /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
 		9F59AD082EC2F9C7007798A5 /* CryptoEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoEncryptionService.swift; sourceTree = "<group>"; };
@@ -83,17 +86,21 @@
 		9F68B0F22EBAFF9200F69A12 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		9F68B0F32EBAFF9200F69A12 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		9F68B0F52EBAFF9200F69A12 /* APIConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIConstants.swift; sourceTree = "<group>"; };
-		9F68B0F72EBAFF9200F69A12 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		9F7497122EC3FFC700F7ADCD /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
+		9F7497132EC3FFC700F7ADCD /* MedallionConnectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedallionConnectionView.swift; sourceTree = "<group>"; };
+		9F7497172EC403AE00F7ADCD /* ConnectionsHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionsHelpView.swift; sourceTree = "<group>"; };
+		9F7497182EC403AE00F7ADCD /* MessagesHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesHelpView.swift; sourceTree = "<group>"; };
+		9F7497192EC403AE00F7ADCD /* SettingsHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpView.swift; sourceTree = "<group>"; };
 		9F7FD2122EB997FE000D24EF /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		9F7FD2132EB997FE000D24EF /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		9F7FD2142EB997FE000D24EF /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		9F7FD2152EB997FE000D24EF /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
-		9F7FD21C2EB999B6000D24EF /* AutomationGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationGuideView.swift; sourceTree = "<group>"; };
 		9F7FD21F2EB9A7EB000D24EF /* CheckConnectionIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckConnectionIntent.swift; sourceTree = "<group>"; };
 		9FB252592EBAD9ED009DA72F /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		9FB2525A2EBAD9ED009DA72F /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		9FB2525B2EBAD9ED009DA72F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		96F75A002962D9EF00D36D9F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -103,6 +110,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		722FDF0567F2DC2F8736C7A0 /* Pods */ = {
 			isa = PBXGroup;
@@ -214,6 +222,8 @@
 		9F59AD102EC31B4C007798A5 /* Connections */ = {
 			isa = PBXGroup;
 			children = (
+				9F7497122EC3FFC700F7ADCD /* DeviceRegistrationView.swift */,
+				9F7497132EC3FFC700F7ADCD /* MedallionConnectionView.swift */,
 				9F59AD0F2EC31B4C007798A5 /* ConnectionsView.swift */,
 			);
 			path = Connections;
@@ -256,6 +266,7 @@
 				9F59AD192EC31B4C007798A5 /* Settings */,
 				9F59AD1A2EC31B4C007798A5 /* AutomationGuideView.swift */,
 				9F59AD1C2EC31B4C007798A5 /* MainTabView.swift */,
+				9F74971A2EC403AE00F7ADCD /* Help */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -306,7 +317,18 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		9F74971A2EC403AE00F7ADCD /* Help */ = {
+			isa = PBXGroup;
+			children = (
+				9F7497172EC403AE00F7ADCD /* ConnectionsHelpView.swift */,
+				9F7497182EC403AE00F7ADCD /* MessagesHelpView.swift */,
+				9F7497192EC403AE00F7ADCD /* SettingsHelpView.swift */,
+			);
+			path = Help;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
 /* Begin PBXNativeTarget section */
 		96F75A022962D9EF00D36D9F /* BLEScanner */ = {
 			isa = PBXNativeTarget;
@@ -326,6 +348,7 @@
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
+
 /* Begin PBXProject section */
 		96F759FB2962D9EF00D36D9F /* Project object */ = {
 			isa = PBXProject;
@@ -356,6 +379,7 @@
 			);
 		};
 /* End PBXProject section */
+
 /* Begin PBXResourcesBuildPhase section */
 		96F75A012962D9EF00D36D9F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
@@ -375,6 +399,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		96F759FF2962D9EF00D36D9F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -388,8 +413,13 @@
 				9F7FD2192EB997FE000D24EF /* Models.swift in Sources */,
 				9F4F8E5C2EBC73ED00DC4612 /* ContactService.swift in Sources */,
 				9F25ECEC2EBDBAF60070318E /* PushNotificationService.swift in Sources */,
+				9F74971B2EC403AE00F7ADCD /* SettingsHelpView.swift in Sources */,
+				9F74971C2EC403AE00F7ADCD /* MessagesHelpView.swift in Sources */,
+				9F74971D2EC403AE00F7ADCD /* ConnectionsHelpView.swift in Sources */,
 				9F7FD2202EB9A7EB000D24EF /* CheckConnectionIntent.swift in Sources */,
 				96F75A072962D9EF00D36D9F /* BLEScannerApp.swift in Sources */,
+				9F7497142EC3FFC700F7ADCD /* DeviceRegistrationView.swift in Sources */,
+				9F7497152EC3FFC700F7ADCD /* MedallionConnectionView.swift in Sources */,
 				9F68B0FA2EBAFF9200F69A12 /* APIClient.swift in Sources */,
 				9F68B0FC2EBAFF9200F69A12 /* MessagingModels.swift in Sources */,
 				9F59AD0B2EC2F9C7007798A5 /* CryptoKeyManager.swift in Sources */,
@@ -412,6 +442,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
 /* Begin XCBuildConfiguration section */
 		96F75A102962D9F100D36D9F /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -634,6 +665,7 @@
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
+
 /* Begin XCConfigurationList section */
 		96F759FE2962D9EF00D36D9F /* Build configuration list for PBXProject "BLEScanner" */ = {
 			isa = XCConfigurationList;
