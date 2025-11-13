@@ -165,7 +165,7 @@ struct SettingsTabView: View {
                 .foregroundStyle(.red)
             }
         } header: {
-            Text("BLE Connection")
+            Text("Medal of Freedom Connection")
         } footer: {
             if bleManager.autoConnectEnabled {
                 Text("Auto-connect will attempt up to \(BLEConfiguration.maxReconnectionAttempts) reconnections. Background reconnection uses more battery.")

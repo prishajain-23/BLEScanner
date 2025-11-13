@@ -7,7 +7,7 @@
 **What's Complete:**
 - ✅ PostgreSQL database (4 tables, 7 indexes)
 - ✅ Node.js/Express API with JWT auth
-- ✅ APNs push notifications configured (Key: X859SFN76P, Team: NV97R9Q8MF, Bundle: com.prishajain.blescanner)
+- ✅ APNs push notifications configured (Key: N2UGRH67CT, Team: NV97R9Q8MF, Bundle: com.prishajain.medaloffreedom)
 - ✅ Production deployment (PM2 + Nginx on 142.93.184.210)
 
 **Next: Phase 2 - iOS Integration**
@@ -171,7 +171,7 @@ Medal of Freedom in range → Auto-connect → Message sent to contacts → Push
 - Directory: `/var/www/blescanner-backend/server`
 - DB: PostgreSQL (user: `blescanner_user`, db: `blescanner`)
 - Process: PM2 (`blescanner-backend`)
-- APNs: Key X859SFN76P, Team NV97R9Q8MF, Bundle com.prishajain.blescanner
+- APNs: Key N2UGRH67CT, Team NV97R9Q8MF, Bundle com.prishajain.medaloffreedom
 
 ---
 

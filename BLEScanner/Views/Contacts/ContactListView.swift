@@ -14,15 +14,30 @@ struct ContactListView: View {
     @State private var contactToDelete: Contact?
 
     var body: some View {
-        Group {
-            if contactService.isLoading && contactService.contacts.isEmpty {
-                ProgressView("Loading contacts...")
-            } else if contactService.contacts.isEmpty {
-                emptyState
-            } else {
-                contactList
+        NavigationStack {
+            Group {
+                if contactService.isLoading && contactService.contacts.isEmpty {
+                    ProgressView("Loading contacts...")
+                } else if contactService.contacts.isEmpty {
+                    emptyState
+                } else {
+                    contactList
+                }
+            }
+            .navigationTitle("Manage Contacts")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showAddContact = true
+                    } label: {
+                        Image(systemName: "person.badge.plus")
+                    }
+                }
             }
         }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
         .sheet(isPresented: $showAddContact) {
             AddContactView()
         }
@@ -38,7 +53,6 @@ struct ContactListView: View {
         }
         .task {
             await contactService.fetchContacts()
-            contactService.loadSelectedContacts()
         }
     }
 

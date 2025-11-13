@@ -10,8 +10,9 @@ import SwiftUI
 struct MessagesTabView: View {
     @State private var selectedSegment = 0
     @State private var contactService = ContactService.shared
-    @State private var showAddContact = false
     @State private var showHelp = false
+    @State private var showMessagingSettings = false
+    var bleManager: BLEManager
 
     var body: some View {
         NavigationStack {
@@ -42,26 +43,27 @@ struct MessagesTabView: View {
                     }
                 }
 
-                if selectedSegment == 1 {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            showAddContact = true
-                        } label: {
-                            Image(systemName: "person.badge.plus")
-                        }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showMessagingSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
                     }
                 }
             }
-            .sheet(isPresented: $showAddContact) {
-                AddContactView()
-            }
             .sheet(isPresented: $showHelp) {
                 MessagesHelpView()
+            }
+            .sheet(isPresented: $showMessagingSettings) {
+                MessagingSettingsView(bleManager: bleManager)
             }
         }
     }
 }
 
 #Preview {
-    MessagesTabView()
+    MessagesTabView(bleManager: BLEManager(
+        notificationManager: NotificationManager(),
+        shortcutManager: ShortcutManager()
+    ))
 }

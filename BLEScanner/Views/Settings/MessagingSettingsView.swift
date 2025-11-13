@@ -14,13 +14,12 @@ struct MessagingSettingsView: View {
     var bleManager: BLEManager
 
     @State private var showContacts = false
-    @State private var showMessageHistory = false
     @State private var showLogoutConfirmation = false
     @State private var isSendingTestMessage = false
     @State private var testMessageResult: String?
 
     // Message template
-    @AppStorage("messageTemplate") private var messageTemplate = "Medal of Freedom connected"
+    @AppStorage("messageTemplate") private var messageTemplate = "I've been stopped by ICE on {date} at {time}.\nLocation: {location}\n\nFind me using the ICE locator at https://locator.ice.gov/odls\n\nMy A-number is ____.\nMy legal documents are at ____. Please get them and contact my lawyer ____.\n\nI entrust short-term guardianship of my children to ____. Please pick them up from school/daycare immediately and make any needed medical or legal decisions for them.\n\nMy next court date is ____.\nPlease notify my workplace at ____.\nMy medications are ____."
 
     var body: some View {
         NavigationStack {
@@ -38,9 +37,6 @@ struct MessagingSettingsView: View {
 
                 // Contact management
                 contactsSection
-
-                // Message history
-                messagesSection
 
                 // Test encryption
                 if AuthService.shared.isAuthenticated {
@@ -63,9 +59,6 @@ struct MessagingSettingsView: View {
             }
             .sheet(isPresented: $showContacts) {
                 ContactListView()
-            }
-            .sheet(isPresented: $showMessageHistory) {
-                MessageHistoryView()
             }
             .alert("Logout", isPresented: $showLogoutConfirmation) {
                 Button("Cancel", role: .cancel) { }
@@ -119,22 +112,51 @@ struct MessagingSettingsView: View {
                 }
             }
 
-            // Reset button
-            Button("Reset to Default") {
-                messageTemplate = "{device} connected"
+            // Sample templates
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Sample Templates:")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
+
+                Button("Full ICE Encounter (Detailed)") {
+                    messageTemplate = "I've been stopped by ICE on {date} at {time}.\nLocation: {location}\n\nFind me using the ICE locator at https://locator.ice.gov/odls\n\nMy A-number is ____.\nMy legal documents are at ____. Please get them and contact my lawyer ____.\n\nI entrust short-term guardianship of my children to ____. Please pick them up from school/daycare immediately and make any needed medical or legal decisions for them.\n\nMy next court date is ____.\nPlease notify my workplace at ____.\nMy medications are ____.\n\nPlease take care of my pets at ____.\nMy bank account information is with ____.\nMy rent/mortgage is due on ____."
+                }
+                .font(.caption)
+                .buttonStyle(.borderless)
+
+                Button("With Children & Documents") {
+                    messageTemplate = "ICE stopped me on {date} at {time}.\nLocation: {location}\n\nMy kids need to be picked up - I'm giving temporary guardianship to ____. They can make medical and legal choices.\n\nMy legal papers are located at ____. Please contact my lawyer ____.\n\nFind me at https://locator.ice.gov/odls"
+                }
+                .font(.caption)
+                .buttonStyle(.borderless)
+
+                Button("With Documents Only") {
+                    messageTemplate = "I've been detained by ICE - {date} at {time}.\nLocation: {location}\n\nI need an attorney. My important legal documents are located at ____. Please retrieve them and contact my lawyer _____.\n\nYou can find me using https://locator.ice.gov/odls"
+                }
+                .font(.caption)
+                .buttonStyle(.borderless)
+
+                Button("Brief Message") {
+                    messageTemplate = "I've been stopped by ICE on {date} at {time}.\nLocation: {location}\n\nFind me: https://locator.ice.gov/odls"
+                }
+                .font(.caption)
+                .buttonStyle(.borderless)
             }
-            .font(.subheadline)
         } header: {
             Text("Message Template")
         } footer: {
-            Text("Customize your message. Use {device} for device name, {time} for timestamp.\nExample: \"{device} is now online\" → \"Living Room Medal of Freedom is now online\"")
+            Text("Your message will be sent automatically when your Medal of Freedom connects. Use {date} for date, {time} for time, and {location} for GPS coordinates. Replace ____ with specific names and locations before an emergency.\n\nKnow Your Rights: You have the right to remain silent and request an attorney. Do not consent to searches. Make sure emergency contacts know they may need to care for your children.")
         }
     }
 
     private var previewMessage: String {
-        messageTemplate
+        let now = Date()
+        return messageTemplate
             .replacingOccurrences(of: "{device}", with: "Medal of Freedom")
-            .replacingOccurrences(of: "{time}", with: Date().formatted(date: .omitted, time: .shortened))
+            .replacingOccurrences(of: "{date}", with: now.formatted(date: .abbreviated, time: .omitted))
+            .replacingOccurrences(of: "{time}", with: now.formatted(date: .omitted, time: .shortened))
+            .replacingOccurrences(of: "{location}", with: "Brooklyn, NY - https://maps.google.com/?q=40.748817,-73.985428")
     }
 
     // MARK: - User Profile Section
@@ -190,27 +212,6 @@ struct MessagingSettingsView: View {
             } else {
                 Text("Messages will be sent to \(contactService.selectedContactIds.count) selected contact(s)")
             }
-        }
-    }
-
-    // MARK: - Messages Section
-
-    private var messagesSection: some View {
-        Section {
-            Button {
-                showMessageHistory = true
-            } label: {
-                HStack {
-                    Label("Message History", systemImage: "envelope")
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .foregroundStyle(.primary)
-        } header: {
-            Text("History")
         }
     }
 
@@ -291,7 +292,7 @@ struct MessagingSettingsView: View {
         testMessageResult = nil
 
         let selectedIds = contactService.selectedContactIds
-        let testMessage = "🔐 Test encrypted message from BLEScanner"
+        let testMessage = "🔐 Test encrypted message from Medal of Freedom"
 
         let success = await MessagingService.shared.sendMessage(
             toUserIds: selectedIds,

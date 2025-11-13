@@ -145,18 +145,6 @@ struct MessageHistoryView: View {
             Text(message.messageText ?? "[Encrypted - Unable to decrypt]")
                 .font(.body)
                 .padding(.vertical, 4)
-
-            // Read status
-            if !message.isSent {
-                HStack(spacing: 4) {
-                    Image(systemName: message.read == true ? "envelope.open.fill" : "envelope.fill")
-                        .font(.caption2)
-
-                    Text(message.read == true ? "Read" : "Unread")
-                        .font(.caption2)
-                }
-                .foregroundStyle(message.read == true ? Color.secondary : Color.blue)
-            }
         }
         .padding(.vertical, 4)
     }

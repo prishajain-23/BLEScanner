@@ -102,10 +102,17 @@ class MessagingService {
         let template = UserDefaults.standard.string(forKey: "messageTemplate") ?? "{device} connected"
         print("📝 Message template: \(template)")
 
+        // Get current location
+        let location = await LocationService.shared.getCurrentLocation()
+        print("📍 Location: \(location)")
+
         // Replace template variables
+        let now = Date()
         let message = template
             .replacingOccurrences(of: "{device}", with: deviceName)
-            .replacingOccurrences(of: "{time}", with: Date().formatted(date: .omitted, time: .shortened))
+            .replacingOccurrences(of: "{date}", with: now.formatted(date: .abbreviated, time: .omitted))
+            .replacingOccurrences(of: "{time}", with: now.formatted(date: .omitted, time: .shortened))
+            .replacingOccurrences(of: "{location}", with: location)
 
         print("📧 Final message: \(message)")
 

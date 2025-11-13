@@ -78,7 +78,7 @@ struct SettingsHelpView: View {
                     HelpSection(
                         icon: "antenna.radiowaves.left.and.right",
                         iconColor: .green,
-                        title: "BLE Connection Settings"
+                        title: "Medal of Freedom Connection Settings"
                     ) {
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Manage your device connection behavior:")
@@ -110,7 +110,7 @@ struct SettingsHelpView: View {
                         title: "Shortcuts Automation (Advanced)"
                     ) {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("BLEScanner provides App Intents for iOS Shortcuts:")
+                            Text("Medal of Freedom provides App Intents for iOS Shortcuts:")
                                 .fontWeight(.medium)
 
                             BulletPoint(text: "Check Medal of Freedom connection status")
@@ -124,7 +124,7 @@ struct SettingsHelpView: View {
                             HelpStep(number: 1, text: "Open Shortcuts app")
                             HelpStep(number: 2, text: "Create a new automation")
                             HelpStep(number: 3, text: "Choose a trigger (App Opens, Time, Location)")
-                            HelpStep(number: 4, text: "Add \"Check BLEScanner Connection\" action")
+                            HelpStep(number: 4, text: "Add \"Check Medal of Freedom Connection\" action")
                             HelpStep(number: 5, text: "Add conditional actions based on result")
 
                             AutomationExample(

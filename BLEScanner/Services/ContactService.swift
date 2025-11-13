@@ -49,6 +49,9 @@ class ContactService {
                 contacts = fetchedContacts
                 lastFetchTime = Date()
                 print("✅ Fetched \(fetchedContacts.count) contacts")
+
+                // Automatically load selected contacts after fetching
+                loadSelectedContacts()
             } else {
                 errorMessage = response.error ?? "Failed to fetch contacts"
                 print("❌ Error: \(errorMessage ?? "Unknown")")

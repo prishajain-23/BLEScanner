@@ -46,7 +46,7 @@ struct MessagesHelpView: View {
                                 .padding(.top, 4)
 
                             HelpStep(number: 1, text: "Your Medal of Freedom connects via Bluetooth")
-                            HelpStep(number: 2, text: "BLEScanner encrypts and sends your message")
+                            HelpStep(number: 2, text: "Medal of Freedom encrypts and sends your message")
                             HelpStep(number: 3, text: "Selected contacts receive push notifications")
                             HelpStep(number: 4, text: "Messages appear in their Message History")
 

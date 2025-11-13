@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var bleManager: BLEManager
+    @State private var contactService = ContactService.shared
     @State private var selectedTab = 0
 
     init(bleManager: BLEManager) {
@@ -25,7 +26,7 @@ struct MainTabView: View {
                 .tag(0)
 
             // Messages Tab
-            MessagesTabView()
+            MessagesTabView(bleManager: bleManager)
                 .tabItem {
                     Label("Messages", systemImage: "bubble.left.and.bubble.right.fill")
                 }
@@ -37,6 +38,10 @@ struct MainTabView: View {
                     Label("Settings", systemImage: "gear")
                 }
                 .tag(2)
+        }
+        .task {
+            // Load contacts and their selections on app launch
+            await contactService.fetchContacts()
         }
     }
 }

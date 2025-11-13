@@ -108,20 +108,16 @@ class PushService {
     let notificationBody;
 
     if (encrypted || !message_text) {
-      // Encrypted message - sender name only (privacy-preserving)
-      notificationBody = device_name
-        ? `${device_name}: New message`
-        : 'New message';
+      // Encrypted message - show device name
+      notificationBody = device_name || 'New message';
     } else {
-      // Plaintext message (legacy) - show full content
-      notificationBody = device_name
-        ? `${device_name}: ${message_text}`
-        : message_text;
+      // Plaintext message (legacy) - show device name
+      notificationBody = device_name || message_text;
     }
 
     const notification = {
       alert: {
-        title: from_username,
+        title: 'MOF',
         body: notificationBody
       },
       badge: 1,
@@ -130,6 +126,7 @@ class PushService {
         type: 'message',
         message_id: messageData.message_id,
         from_user_id: messageData.from_user_id,
+        from_username: from_username,
         device_name: device_name,
         encrypted: encrypted || false
       }

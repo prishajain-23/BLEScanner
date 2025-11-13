@@ -82,7 +82,7 @@ struct AutomationGuideView: View {
 
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("1. Automation → + → App")
-                                Text("2. Select 'BLE Scanner'")
+                                Text("2. Select 'Medal of Freedom'")
                                 Text("3. Choose 'Is Opened'")
                                 Text("4. Add: Check Medal of Freedom Connection")
                                 Text("5. If true → Run your shortcut")
@@ -191,7 +191,7 @@ struct AutomationGuideView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             TroubleshootRow(
                                 problem: "No notification appears",
-                                solution: "Check Settings → Notifications → BLE Scanner is enabled"
+                                solution: "Check Settings → Notifications → Medal of Freedom is enabled"
                             )
 
                             TroubleshootRow(

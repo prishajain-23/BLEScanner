@@ -35,8 +35,7 @@
 ### Current Configuration
 
 For the BLEScanner production server:
-- Key ID: `X859SFN76P` (REVOKED - DO NOT USE)
+- Key ID: `N2UGRH67CT` (Active - Created Nov 12, 2025)
 - Team ID: `NV97R9Q8MF`
-- Bundle ID: `com.prishajain.blescanner`
-
-**ACTION REQUIRED:** Generate a new APNs key to replace the exposed one.
+- Bundle ID: `com.prishajain.medaloffreedom`
+- Previous Key: `X859SFN76P` (REVOKED Nov 12, 2025 @ 3:40PM EST - compromised)

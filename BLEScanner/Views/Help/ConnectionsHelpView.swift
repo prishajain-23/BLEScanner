@@ -97,7 +97,7 @@ struct ConnectionsHelpView: View {
                             BulletPoint(text: "Attempt to reconnect if the connection drops")
                             BulletPoint(text: "Retry up to \(BLEConfiguration.maxReconnectionAttempts) times before giving up")
 
-                            Text("You can enable/disable auto-connect and background reconnection in Settings → BLE Connection.")
+                            Text("You can enable/disable auto-connect and background reconnection in Settings → Medal of Freedom Connection.")
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                                 .padding(.top, 4)
@@ -115,7 +115,7 @@ struct ConnectionsHelpView: View {
                                 .fontWeight(.medium)
 
                             HelpStep(number: 1, text: "Go to Settings tab")
-                            HelpStep(number: 2, text: "Scroll to \"BLE Connection\" section")
+                            HelpStep(number: 2, text: "Scroll to \"Medal of Freedom Connection\" section")
                             HelpStep(number: 3, text: "Tap \"Clear Auto-Connect Device\"")
                             HelpStep(number: 4, text: "Return to Connections tab")
                             HelpStep(number: 5, text: "Tap the + button to register a new device")
